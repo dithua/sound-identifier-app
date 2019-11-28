@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Αναγνώριση ήχου</string>
+    <string name="action_settings">Ρυθμίσεις</string>
+    <string name="open_file_button">Άνοιγμα αρχείου</string>
+    <string name="record_button">Ηχογράφηση</string>
+    <string name="clear_my_library">Διαγραφή καταχωρίσεων από την Βιβλιοθήκη Μου</string>
+    <string name="connection_settings">Ρυθμίσεις σύνδεσης στον διακομιστή</string>
+    <string name="connection_settings_title">Ρυθμίσεις σύνδεσης</string>
+    <string name="action_my_library">Η Βιβλιοθήκη Μου</string>
+    <string name="connection_settings_summary">Πατήστε για να αλλάξετε την διεύθυνση IP του διακομιστή</string>
+    <string name="save_to_db_switch">Αποθήκευση πληροφοριών κομματιού στην Βιβλιοθήκη Μου</string>
+    <string name="geotagging_switch">Αποθήκευση μεταδεδομένων τοποθεσίας στην Βιβλιοθήκη Μου</string>
+    <string name="geotagging_switch_title">Γεωεντοπισμός</string>
+
+</resources>

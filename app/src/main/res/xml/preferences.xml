@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <EditTextPreference
+        app:title="@string/connection_settings_title"
+        app:dialogTitle="@string/connection_settings"
+        app:key="connection_settings_edit_text"
+        app:summary="@string/connection_settings_summary" />
+    <SwitchPreferenceCompat
+        app:title="@string/action_my_library"
+        app:key="save_to_db_switch"
+        app:summary="@string/save_to_db_switch"
+        app:defaultValue="true" />
+    <SwitchPreferenceCompat
+        app:title="@string/geotagging_switch_title"
+        app:key="geotagging_switch"
+        app:summary="@string/geotagging_switch"
+        app:defaultValue="false" />
+    <Preference
+        app:key="clear_my_library"
+        app:title="@string/clear_my_library" />
+</PreferenceScreen>
