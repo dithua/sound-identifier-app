@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="gr.geova.soundidentifier">
 
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" android:required="true" />
     <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:required="false"/>
 
@@ -16,6 +16,14 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/action_settings">
+        </activity>
+        <activity
+            android:name=".AudioRecordActivity"
+            android:label="@string/audio_record_activity">
+        </activity>
+        <activity
+            android:name=".MyLibraryActivity"
+            android:label="@string/action_my_library">
         </activity>
         <activity
             android:name=".MainActivity"

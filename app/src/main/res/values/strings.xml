@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Sound Identifier</string>
     <string name="action_settings">Settings</string>
+    <string name="audio_record_activity">Audio record</string>
+
     <string name="record_button">Record</string>
     <string name="open_file_button">Open File</string>
     <string name="clear_my_library">Delete records in My Library</string>
@@ -9,8 +11,13 @@
     <string name="action_my_library">My Library</string>
     <string name="connection_settings_summary">Click to change server\'s IP address</string>
     <string name="save_to_db_switch">Save track\'s info in My Library</string>
+    <string name="save_recordings">Save recordings</string>
+    <string name="save_recordings_summary">Save recordings in internal storage</string>
     <string name="geotagging_switch_title">Geotagging</string>
     <string name="geotagging_switch">Save location metadata in My Library</string>
+
+    <string name="recording_text_view">Recording in progress...</string>
+    <string name="stop_recording_button">Stop</string>
     <!--<string name="title_activity_settings">Settings</string>-->
 
 </resources>

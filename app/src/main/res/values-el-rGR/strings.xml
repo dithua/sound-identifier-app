@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">Αναγνώριση ήχου</string>
     <string name="action_settings">Ρυθμίσεις</string>
+    <string name="audio_record_activity">Καταγραφή ήχου</string>
+
     <string name="open_file_button">Άνοιγμα αρχείου</string>
     <string name="record_button">Ηχογράφηση</string>
     <string name="clear_my_library">Διαγραφή καταχωρίσεων από την Βιβλιοθήκη Μου</string>
@@ -10,7 +12,11 @@
     <string name="action_my_library">Η Βιβλιοθήκη Μου</string>
     <string name="connection_settings_summary">Πατήστε για να αλλάξετε την διεύθυνση IP του διακομιστή</string>
     <string name="save_to_db_switch">Αποθήκευση πληροφοριών κομματιού στην Βιβλιοθήκη Μου</string>
+    <string name="save_recordings">Αποθήκευση ηχογραφήσεων</string>
+    <string name="save_recordings_summary">Αποθήκευση ηχογραφήσεων στην εσωτερική μνήμη</string>
     <string name="geotagging_switch">Αποθήκευση μεταδεδομένων τοποθεσίας στην Βιβλιοθήκη Μου</string>
     <string name="geotagging_switch_title">Γεωεντοπισμός</string>
 
+    <string name="recording_text_view">Πραγματοποίειται ηχογράφηση...</string>
+    <string name="stop_recording_button">Διακοπή</string>
 </resources>
