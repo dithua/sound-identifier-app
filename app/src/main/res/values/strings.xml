@@ -5,6 +5,7 @@
 
     <string name="record_button">Record</string>
     <string name="open_file_button">Open File</string>
+    <string name="basic_settings">Basic Settings</string>
     <string name="clear_my_library">Delete records in My Library</string>
     <string name="connection_settings">Connect to server settings</string>
     <string name="connection_settings_title">Connection settings</string>
@@ -15,6 +16,12 @@
     <string name="save_recordings_summary">Save recordings in internal storage</string>
     <string name="geotagging_switch_title">Geotagging</string>
     <string name="geotagging_switch">Save location metadata in My Library</string>
+    <string name="advanced_settings">Advanced Settings</string>
+    <string name="playback_track">Playback track</string>
+    <string name="playback_track_summary">Turn on to play the recorded audio</string>
+    <string name="duration_recording">Duration of recording</string>
+    <string name="duration_recording_summary">Click to set up the duration of the recording</string>
+
 
     <string name="recording_text_view">Recording in progress...</string>
     <string name="stop_recording_button">Stop</string>

@@ -6,6 +6,7 @@
 
     <string name="open_file_button">Άνοιγμα αρχείου</string>
     <string name="record_button">Ηχογράφηση</string>
+    <string name="basic_settings">Βασικές ρυθμίσεις</string>
     <string name="clear_my_library">Διαγραφή καταχωρίσεων από την Βιβλιοθήκη Μου</string>
     <string name="connection_settings">Ρυθμίσεις σύνδεσης στον διακομιστή</string>
     <string name="connection_settings_title">Ρυθμίσεις σύνδεσης</string>
@@ -16,6 +17,11 @@
     <string name="save_recordings_summary">Αποθήκευση ηχογραφήσεων στην εσωτερική μνήμη</string>
     <string name="geotagging_switch">Αποθήκευση μεταδεδομένων τοποθεσίας στην Βιβλιοθήκη Μου</string>
     <string name="geotagging_switch_title">Γεωεντοπισμός</string>
+    <string name="advanced_settings">Ρυθμίσεις για προχωρημένους</string>
+    <string name="playback_track">Αναπαραγωγή ηχογράφησης</string>
+    <string name="playback_track_summary">Ενεργοποιήστε για να ακούσετε την ηχογράφηση</string>
+    <string name="duration_recording">Διάρκεια ηχογράφησης</string>
+    <string name="duration_recording_summary">Επιλέξτε για να διαλέξετε πόσα δευτερόλεπτα θα διαρκεί η καταγραφη</string>
 
     <string name="recording_text_view">Πραγματοποίειται ηχογράφηση...</string>
     <string name="stop_recording_button">Διακοπή</string>
