@@ -17,14 +17,30 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
+import net.sourceforge.jaad.aac.AACException;
+import net.sourceforge.jaad.aac.Decoder;
+import net.sourceforge.jaad.aac.SampleBuffer;
+import net.sourceforge.jaad.adts.ADTSDemultiplexer;
+
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
 // Portions of this code are from https://developer.android.com/guide/topics/media/mediarecorder. Licensed under Apache 2.0 (https://source.android.com/license).
 
 public class AudioRecordActivity extends AppCompatActivity {
+
+    static {
+        System.loadLibrary("fingerprint-lib");
+    }
+    private native void fingerprint(double[] doubles);
 
     private static final String LOG_TAG = "AudioRecordActivity";
 
@@ -60,9 +76,23 @@ public class AudioRecordActivity extends AppCompatActivity {
         if (keepRecordedFiles) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE-MM_d-yy_HH:mm:ss", Locale.US);
 
-            fileName = getExternalFilesDir(null).getAbsolutePath() + "/" + simpleDateFormat.format(new Date()) + ".3gp";;
+            if (getExternalFilesDir(null) != null) {
+                fileName = getExternalFilesDir(null).getAbsolutePath();
+            } else {
+                fileName = getFilesDir().getAbsolutePath();
+            }
+
+            fileName += "/" + simpleDateFormat.format(new Date()) + ".aac";//".3gp";
         } else {
-            fileName = getExternalCacheDir().getAbsolutePath() + "/audiorecordtest.3gp";
+
+            if (getExternalCacheDir() != null) {
+                fileName = getExternalCacheDir().getAbsolutePath();
+            } else {
+                fileName = getCacheDir().getAbsolutePath();
+            }
+
+            //fileName += "/audiorecordtest.3gp";
+            fileName += "/audiorecordtest.aac";
         }
         Log.i(LOG_TAG, "filename is : " + fileName);
     }
@@ -94,7 +124,14 @@ public class AudioRecordActivity extends AppCompatActivity {
             }
         });
     }
-
+    public static double[] toDoubleArray(byte[] byteArray){
+        int times = Double.SIZE / Byte.SIZE;
+        double[] doubles = new double[byteArray.length / times];
+        for(int i=0;i<doubles.length;i++){
+            doubles[i] = ByteBuffer.wrap(byteArray, i*times, times).getDouble();
+        }
+        return doubles;
+    }
     @Override
     public void onStart() {
         super.onStart();
@@ -145,6 +182,87 @@ public class AudioRecordActivity extends AppCompatActivity {
                             Log.e(LOG_TAG, "prepare() failed");
                         }
                     } else {
+
+                        // Step 1
+                        // TODO it works! But it has to be in another place!
+                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                        ADTSDemultiplexer adts = null;
+                        try {
+                            adts = new ADTSDemultiplexer(new FileInputStream(fileName));
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        Decoder dec = null;
+                        try {
+                            dec = new Decoder(adts.getDecoderSpecificInfo());
+                        } catch (AACException e) {
+                            e.printStackTrace();
+                        }
+                        final SampleBuffer buf = new SampleBuffer();
+                        byte[] frame;
+                        while (true) {
+                            try {
+                                frame = adts.readNextFrame();
+                            } catch (Exception e) {
+                                break;
+                            }
+
+                            try {
+                                dec.decodeFrame(frame, buf);
+                            } catch (AACException e) {
+                                e.printStackTrace();
+                            }
+                            try {
+                                outputStream.write(buf.getData());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        byte[] outputStreamByteArray = outputStream.toByteArray();
+                        //short[] shorts = new short[outputStreamByteArray.length / 2];
+                        double[] s = toDoubleArray(outputStreamByteArray);
+                        //ByteBuffer.wrap(outputStreamByteArray).order(ByteOrder.BIG_ENDIAN).asDoubleBuffer().get(s);
+                        /*ByteBuffer.wrap(outputStreamByteArray).order(ByteOrder.BIG_ENDIAN).asShortBuffer().get(shorts);
+
+                        if (adts.getChannelCount() == 2) {
+                            short[][] channels = new short[2][shorts.length/2];
+
+                            int j = 0, k = 0;
+                            for (int i = 0; i < shorts.length; i++) {
+                                if (i % 2 == 0) {
+                                    channels[0][j++] = shorts[i];
+                                } else {
+                                    channels[1][k++] = shorts[i];
+                                }
+                            }
+                        }*/
+
+                        // Step 2 -- unnecessary
+                        /*try {
+                            MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
+                            InputStream is = new FileInputStream(fileName);
+                            int n = 0;
+                            byte[] buffer = new byte[1048576];  // pow(2,20)
+                            while (n != -1) {
+                                n = is.read(buffer);
+                                if (n > 0) {
+                                    messageDigest.update(buffer, 0, n);
+                                }
+                            }
+                            String SHA1 = new BigInteger(1, messageDigest.digest()).toString(16);
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }*/
+                        fingerprint(s);
+
+
+
                         finish(); // exit activity
                     }
                 }
@@ -161,13 +279,17 @@ public class AudioRecordActivity extends AppCompatActivity {
             stopRecording();
         }
     }
-
+//TODO add default value 10 seconds!!! SOS
     private void startRecording() {
         mediaRecorder = new MediaRecorder();
+
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
+        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        mediaRecorder.setAudioChannels(2); // it isn't guaranteed that the audio channels will be 2 !!!
+        mediaRecorder.setAudioEncodingBitRate(16*44100); // TODO review this!
+        mediaRecorder.setAudioSamplingRate(44100);
         mediaRecorder.setOutputFile(fileName);
-        mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         try {
             mediaRecorder.prepare();

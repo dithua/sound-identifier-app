@@ -4,7 +4,7 @@
     <string name="audio_record_activity">Audio record</string>
 
     <string name="record_button">Record</string>
-    <string name="open_file_button">Open File</string>
+    <string name="open_file">Open File</string>
     <string name="basic_settings">Basic Settings</string>
     <string name="clear_my_library">Delete records in My Library</string>
     <string name="connection_settings">Connect to server settings</string>

@@ -1,7 +1,10 @@
 package gr.geova.soundidentifier;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,7 +13,36 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import net.sourceforge.jaad.aac.AACException;
+import net.sourceforge.jaad.aac.Decoder;
+import net.sourceforge.jaad.aac.SampleBuffer;
+import net.sourceforge.jaad.adts.ADTSDemultiplexer;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
 public class MainActivity extends AppCompatActivity {
+
+    private static final String LOG_TAG = "MainActuivity";
+    private static final int PICK_FILE_RESULT_CODE = 1;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_FILE_RESULT_CODE && resultCode == Activity.RESULT_OK) {
+            Uri uri = data.getData();
+            Log.i(LOG_TAG, uri.getPath());
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,11 +61,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
-
         openFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent file = new Intent(Intent.ACTION_GET_CONTENT);
+                file.setType("audio/*");
+                file = Intent.createChooser(file, "Choose audio file"); // TODO add it in strings.xml
+                startActivityForResult(file, PICK_FILE_RESULT_CODE);
             }
         });
     }

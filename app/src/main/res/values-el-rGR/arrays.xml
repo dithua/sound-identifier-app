@@ -3,10 +3,12 @@
         <item>5 δευτερόλεπτα</item>
         <item>10 δευτερόλεπτα</item>
         <item>15 δευτερόλεπτα</item>
+        <item>20 δευτερόλεπτα</item>
     </string-array>
     <string-array name="durationDataValues">
         <item>5</item>
         <item>10</item>
         <item>15</item>
+        <item>20</item>
     </string-array>
 </resources>

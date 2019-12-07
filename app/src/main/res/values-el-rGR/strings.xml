@@ -3,8 +3,7 @@
     <string name="app_name">Αναγνώριση ήχου</string>
     <string name="action_settings">Ρυθμίσεις</string>
     <string name="audio_record_activity">Καταγραφή ήχου</string>
-
-    <string name="open_file_button">Άνοιγμα αρχείου</string>
+    <string name="open_file">Άνοιγμα αρχείου</string>
     <string name="record_button">Ηχογράφηση</string>
     <string name="basic_settings">Βασικές ρυθμίσεις</string>
     <string name="clear_my_library">Διαγραφή καταχωρίσεων από την Βιβλιοθήκη Μου</string>
