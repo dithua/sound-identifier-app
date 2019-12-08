@@ -19,7 +19,7 @@
     <string name="advanced_settings">Ρυθμίσεις για προχωρημένους</string>
     <string name="playback_track">Αναπαραγωγή ηχογράφησης</string>
     <string name="playback_track_summary">Ενεργοποιήστε για να ακούσετε την ηχογράφηση</string>
-    <string name="duration_recording">Διάρκεια ηχογράφησης</string>
+    <string name="duration_recording">Διάρκεια ηχογράφησης (σε δευτερόλεπτα)</string>
     <string name="duration_recording_summary">Επιλέξτε για να διαλέξετε πόσα δευτερόλεπτα θα διαρκεί η καταγραφη</string>
 
     <string name="recording_text_view">Πραγματοποίειται ηχογράφηση...</string>

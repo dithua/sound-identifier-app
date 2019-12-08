@@ -27,7 +27,6 @@ public:
     void update(const std::string &s);
     void update(std::istream &is);
     std::string final();
-
 private:
     uint32_t digest[5];
     std::string buffer;

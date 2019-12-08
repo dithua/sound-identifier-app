@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
 
@@ -40,7 +39,8 @@ public class AudioRecordActivity extends AppCompatActivity {
     static {
         System.loadLibrary("fingerprint-lib");
     }
-    private native void fingerprint(double[] doubles);
+
+    private native void fingerprint(short[] doubles);
 
     private static final String LOG_TAG = "AudioRecordActivity";
 
@@ -50,6 +50,7 @@ public class AudioRecordActivity extends AppCompatActivity {
     private MediaRecorder mediaRecorder = null;
     private CountDownTimer countDownTimer = null;
     private boolean recordingFinished = false;
+    private int recordingDuration;
 
     private boolean permissionToRecordAccepted = false;
     private String[] permissions = {Manifest.permission.RECORD_AUDIO};
@@ -82,7 +83,7 @@ public class AudioRecordActivity extends AppCompatActivity {
                 fileName = getFilesDir().getAbsolutePath();
             }
 
-            fileName += "/" + simpleDateFormat.format(new Date()) + ".aac";//".3gp";
+            fileName += "/" + simpleDateFormat.format(new Date()) + ".aac";
         } else {
 
             if (getExternalCacheDir() != null) {
@@ -91,7 +92,6 @@ public class AudioRecordActivity extends AppCompatActivity {
                 fileName = getCacheDir().getAbsolutePath();
             }
 
-            //fileName += "/audiorecordtest.3gp";
             fileName += "/audiorecordtest.aac";
         }
         Log.i(LOG_TAG, "filename is : " + fileName);
@@ -124,14 +124,7 @@ public class AudioRecordActivity extends AppCompatActivity {
             }
         });
     }
-    public static double[] toDoubleArray(byte[] byteArray){
-        int times = Double.SIZE / Byte.SIZE;
-        double[] doubles = new double[byteArray.length / times];
-        for(int i=0;i<doubles.length;i++){
-            doubles[i] = ByteBuffer.wrap(byteArray, i*times, times).getDouble();
-        }
-        return doubles;
-    }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -142,7 +135,7 @@ public class AudioRecordActivity extends AppCompatActivity {
             final ProgressBar progressBar = findViewById(R.id.progressBar);
             progressBar.setProgress(0);
 
-            final int recordingDuration = Integer.parseInt(sharedPreferences.getString("duration_recording", "10 seconds"))*1_000; // converted to milliseconds
+            recordingDuration = Integer.parseInt(sharedPreferences.getString("duration_recording", "10")) * 1_000;
             Log.i(LOG_TAG, "Recording duration in seconds: " + recordingDuration/1_000);
 
             countDownTimer = new CountDownTimer(recordingDuration, 1_000) {
@@ -182,11 +175,10 @@ public class AudioRecordActivity extends AppCompatActivity {
                             Log.e(LOG_TAG, "prepare() failed");
                         }
                     } else {
-
-                        // Step 1
                         // TODO it works! But it has to be in another place!
                         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                         ADTSDemultiplexer adts = null;
+
                         try {
                             adts = new ADTSDemultiplexer(new FileInputStream(fileName));
                         } catch (FileNotFoundException e) {
@@ -221,10 +213,8 @@ public class AudioRecordActivity extends AppCompatActivity {
                             }
                         }
                         byte[] outputStreamByteArray = outputStream.toByteArray();
-                        //short[] shorts = new short[outputStreamByteArray.length / 2];
-                        double[] s = toDoubleArray(outputStreamByteArray);
-                        //ByteBuffer.wrap(outputStreamByteArray).order(ByteOrder.BIG_ENDIAN).asDoubleBuffer().get(s);
-                        /*ByteBuffer.wrap(outputStreamByteArray).order(ByteOrder.BIG_ENDIAN).asShortBuffer().get(shorts);
+                        short[] shorts = new short[outputStreamByteArray.length / 2];
+                        ByteBuffer.wrap(outputStreamByteArray).order(ByteOrder.BIG_ENDIAN).asShortBuffer().get(shorts);
 
                         if (adts.getChannelCount() == 2) {
                             short[][] channels = new short[2][shorts.length/2];
@@ -237,31 +227,12 @@ public class AudioRecordActivity extends AppCompatActivity {
                                     channels[1][k++] = shorts[i];
                                 }
                             }
-                        }*/
 
-                        // Step 2 -- unnecessary
-                        /*try {
-                            MessageDigest messageDigest = MessageDigest.getInstance("SHA-1");
-                            InputStream is = new FileInputStream(fileName);
-                            int n = 0;
-                            byte[] buffer = new byte[1048576];  // pow(2,20)
-                            while (n != -1) {
-                                n = is.read(buffer);
-                                if (n > 0) {
-                                    messageDigest.update(buffer, 0, n);
-                                }
-                            }
-                            String SHA1 = new BigInteger(1, messageDigest.digest()).toString(16);
-                        } catch (NoSuchAlgorithmException e) {
-                            e.printStackTrace();
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }*/
-                        fingerprint(s);
-
-
+                            fingerprint(channels[0]);
+                            fingerprint(channels[1]);
+                        } else {
+                            fingerprint(shorts);
+                        }
 
                         finish(); // exit activity
                     }
@@ -279,7 +250,7 @@ public class AudioRecordActivity extends AppCompatActivity {
             stopRecording();
         }
     }
-//TODO add default value 10 seconds!!! SOS
+//TODO add default value 10 seconds (??)
     private void startRecording() {
         mediaRecorder = new MediaRecorder();
 

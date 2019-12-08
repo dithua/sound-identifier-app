@@ -19,9 +19,8 @@
     <string name="advanced_settings">Advanced Settings</string>
     <string name="playback_track">Playback track</string>
     <string name="playback_track_summary">Turn on to play the recorded audio</string>
-    <string name="duration_recording">Duration of recording</string>
+    <string name="duration_recording">Duration of recording (in seconds)</string>
     <string name="duration_recording_summary">Click to set up the duration of the recording</string>
-
 
     <string name="recording_text_view">Recording in progress...</string>
     <string name="stop_recording_button">Stop</string>

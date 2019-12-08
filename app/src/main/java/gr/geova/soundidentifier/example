@@ -1,0 +1,28 @@
+{
+  "client_data": [
+    {"fingerprint_1": ["hash", "t1"]},
+    {"fingerprint_2": ["hash", "t1"]}
+  ]
+}
+
+==============================================================
+
+python
+
+import json
+json_data = json.dumps({
+                         "client_data": [
+                           {"fingerprint_1": ["hash", "t1"]},
+                           {"fingerprint_2": ["hash", "t1"]}
+                         ]
+                       })
+
+item_dict = json.loads(json_data)
+
+json_length = len(item_dict["client_data"])
+
+==============================================================
+
+C++
+json j;
+

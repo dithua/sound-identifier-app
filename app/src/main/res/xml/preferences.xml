@@ -30,12 +30,13 @@
     <PreferenceCategory
         app:key="advanced_settings"
         app:title="@string/advanced_settings">
-        <ListPreference
+        <DropDownPreference
             app:title="@string/duration_recording"
             app:key="duration_recording"
             app:summary="@string/duration_recording_summary"
             app:entries="@array/durationData"
-            app:entryValues="@array/durationDataValues" />
+            app:entryValues="@array/durationData"
+            app:defaultValue="@integer/recording_duration_default_val" />
         <SwitchPreferenceCompat
             app:title="@string/playback_track"
             app:key="playback_track"
