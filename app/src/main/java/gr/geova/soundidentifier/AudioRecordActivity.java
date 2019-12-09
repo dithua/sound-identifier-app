@@ -74,6 +74,7 @@ public class AudioRecordActivity extends AppCompatActivity {
 
     private void setFileName() {
         final boolean keepRecordedFiles = sharedPreferences.getBoolean("keep_recorded_files_switch", false);
+
         if (keepRecordedFiles) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE-MM_d-yy_HH:mm:ss", Locale.US);
 
@@ -94,6 +95,7 @@ public class AudioRecordActivity extends AppCompatActivity {
 
             fileName += "/audiorecordtest.aac";
         }
+
         Log.i(LOG_TAG, "filename is : " + fileName);
     }
 
@@ -102,7 +104,7 @@ public class AudioRecordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audio_record);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO ) == PackageManager.PERMISSION_DENIED) {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
             requestPermissions(permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         } else {
             permissionToRecordAccepted = true;
@@ -129,118 +131,117 @@ public class AudioRecordActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        if (permissionToRecordAccepted) {
-            onRecord(true);
-
-            final ProgressBar progressBar = findViewById(R.id.progressBar);
-            progressBar.setProgress(0);
-
-            recordingDuration = Integer.parseInt(sharedPreferences.getString("duration_recording", "10")) * 1_000;
-            Log.i(LOG_TAG, "Recording duration in seconds: " + recordingDuration/1_000);
-
-            countDownTimer = new CountDownTimer(recordingDuration, 1_000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    long elapsedTime = recordingDuration - millisUntilFinished;
-                    int total = (int) (((double) elapsedTime/(double) recordingDuration)*100.0);
-                    progressBar.setProgress(total);
-
-                    Log.i(LOG_TAG, "Timer running...");
-                }
-
-                @Override
-                public void onFinish() {
-                    onRecord(false);
-
-                    recordingFinished = true;
-
-                    final boolean playback_track = sharedPreferences.getBoolean("playback_track", false);
-
-                    if (playback_track) {
-                        final MediaPlayer player = new MediaPlayer();
-                        try {
-                            player.setDataSource(fileName);
-                            player.prepare();
-                            player.start();
-                            player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                                @Override
-                                public void onCompletion(MediaPlayer mp) {
-                                    player.stop();
-                                    player.reset();
-                                    player.release();
-                                    finish(); // exit activity ???
-                                }
-                            });
-                        } catch (IOException e) {
-                            Log.e(LOG_TAG, "prepare() failed");
-                        }
-                    } else {
-                        // TODO it works! But it has to be in another place!
-                        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                        ADTSDemultiplexer adts = null;
-
-                        try {
-                            adts = new ADTSDemultiplexer(new FileInputStream(fileName));
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        Decoder dec = null;
-                        try {
-                            dec = new Decoder(adts.getDecoderSpecificInfo());
-                        } catch (AACException e) {
-                            e.printStackTrace();
-                        }
-                        final SampleBuffer buf = new SampleBuffer();
-                        byte[] frame;
-                        while (true) {
-                            try {
-                                frame = adts.readNextFrame();
-                            } catch (Exception e) {
-                                break;
-                            }
-
-                            try {
-                                dec.decodeFrame(frame, buf);
-                            } catch (AACException e) {
-                                e.printStackTrace();
-                            }
-                            try {
-                                outputStream.write(buf.getData());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        byte[] outputStreamByteArray = outputStream.toByteArray();
-                        short[] shorts = new short[outputStreamByteArray.length / 2];
-                        ByteBuffer.wrap(outputStreamByteArray).order(ByteOrder.BIG_ENDIAN).asShortBuffer().get(shorts);
-
-                        if (adts.getChannelCount() == 2) {
-                            short[][] channels = new short[2][shorts.length/2];
-
-                            int j = 0, k = 0;
-                            for (int i = 0; i < shorts.length; i++) {
-                                if (i % 2 == 0) {
-                                    channels[0][j++] = shorts[i];
-                                } else {
-                                    channels[1][k++] = shorts[i];
-                                }
-                            }
-
-                            fingerprint(channels[0]);
-                            fingerprint(channels[1]);
-                        } else {
-                            fingerprint(shorts);
-                        }
-
-                        finish(); // exit activity
-                    }
-                }
-            }.start();
-        } else {
+        if (!permissionToRecordAccepted) {
             finish();
         }
+
+        recordingDuration = Integer.parseInt(sharedPreferences.getString("duration_recording", "10")) * 1_000; // in milliseconds
+        Log.i(LOG_TAG, "Recording duration in seconds: " + recordingDuration / 1_000);
+
+        onRecord(true);
+
+        final ProgressBar progressBar = findViewById(R.id.progressBar);
+        progressBar.setProgress(0);
+
+        countDownTimer = new CountDownTimer(recordingDuration, 1_000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long elapsedTime = recordingDuration - millisUntilFinished;
+                int total = (int) (((double) elapsedTime / (double) recordingDuration) * 100.0);
+                progressBar.setProgress(total);
+
+                Log.i(LOG_TAG, "Timer running...");
+            }
+
+            @Override
+            public void onFinish() {
+                onRecord(false);
+
+                recordingFinished = true;
+
+                final boolean playback_track = sharedPreferences.getBoolean("playback_track", false);
+
+                if (playback_track) {
+                    final MediaPlayer player = new MediaPlayer();
+                    try {
+                        player.setDataSource(fileName);
+                        player.prepare();
+                        player.start();
+                        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                player.stop();
+                                player.reset();
+                                player.release();
+                            }
+                        });
+                    } catch (IOException e) {
+                        Log.e(LOG_TAG, "prepare() failed");
+                    }
+                }
+
+                // TODO it works! But it has to be in another place!
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                ADTSDemultiplexer adts = null;
+
+                try {
+                    adts = new ADTSDemultiplexer(new FileInputStream(fileName));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                Decoder dec = null;
+                try {
+                    dec = new Decoder(adts.getDecoderSpecificInfo());
+                } catch (AACException e) {
+                    e.printStackTrace();
+                }
+                final SampleBuffer buf = new SampleBuffer();
+                byte[] frame;
+                while (true) {
+                    try {
+                        frame = adts.readNextFrame();
+                    } catch (Exception e) {
+                        break;
+                    }
+
+                    try {
+                        dec.decodeFrame(frame, buf);
+                    } catch (AACException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        outputStream.write(buf.getData());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                byte[] outputStreamByteArray = outputStream.toByteArray();
+                short[] shorts = new short[outputStreamByteArray.length / 2];
+                ByteBuffer.wrap(outputStreamByteArray).order(ByteOrder.BIG_ENDIAN).asShortBuffer().get(shorts);
+
+                if (adts.getChannelCount() == 2) {
+                    short[][] channels = new short[2][shorts.length / 2];
+
+                    int j = 0, k = 0;
+                    for (int i = 0; i < shorts.length; i++) {
+                        if (i % 2 == 0) {
+                            channels[0][j++] = shorts[i];
+                        } else {
+                            channels[1][k++] = shorts[i];
+                        }
+                    }
+
+                    fingerprint(channels[0]);
+                    fingerprint(channels[1]);
+                } else {
+                    fingerprint(shorts);
+                }
+
+                finish(); // exit activity
+            }
+        }.start();
     }
 
     private void onRecord(boolean start) {
@@ -250,7 +251,8 @@ public class AudioRecordActivity extends AppCompatActivity {
             stopRecording();
         }
     }
-//TODO add default value 10 seconds (??)
+
+    //TODO add default value 10 seconds (??)
     private void startRecording() {
         mediaRecorder = new MediaRecorder();
 
@@ -258,7 +260,8 @@ public class AudioRecordActivity extends AppCompatActivity {
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         mediaRecorder.setAudioChannels(2); // it isn't guaranteed that the audio channels will be 2 !!!
-        mediaRecorder.setAudioEncodingBitRate(16*44100); // TODO review this!
+        mediaRecorder.setAudioEncodingBitRate(16 * 44100); // TODO review this!
+        mediaRecorder.setMaxDuration(recordingDuration);
         mediaRecorder.setAudioSamplingRate(44100);
         mediaRecorder.setOutputFile(fileName);
 
