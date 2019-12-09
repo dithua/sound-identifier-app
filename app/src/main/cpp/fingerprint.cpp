@@ -61,8 +61,8 @@ This software is provided by the copyright holders and contributors “as is” 
 #include <fingerprint.hpp>
 #include <jni.h>
 #include <sha1.hpp>
-#include <json.hpp>
 #include <android/log.h>
+#include <sstream>
 //#include <opencv2/imgproc/imgproc.hpp>
 //#include <iostream>
 //#include <algorithm>
@@ -121,7 +121,12 @@ std::string Fingerprint::generate_hashes(std::vector<std::pair<int, int>> &v_in)
     });
 
     SHA1 checksum;
-    nlohmann::json json;
+
+    std::stringstream json;
+    json << "{";
+    json << "\"client_data\": [";
+
+    auto fingerprint_index = 0;
 
     for (int i = 0; i < v_in.size(); i++) {
         for (int j = 1; j < DEFAULT_FAN_VALUE; j++) {
@@ -142,17 +147,30 @@ std::string Fingerprint::generate_hashes(std::vector<std::pair<int, int>> &v_in)
 
                     checksum.update(to_be_hashed);
 
-                    std::string hash = checksum.final().erase(FINGERPRINT_REDUCTION, 40);
-                    //__android_log_print(ANDROID_LOG_VERBOSE, "S", "%s %d", hash.c_str(), time1);
-                    json.push_back(hash);
-                    // TODO add time1
-                    // for example:
+                    std::string hash = checksum.final().erase(FINGERPRINT_REDUCTION, 40); // keep the first 20 hex characters
+
+                    /*  JSON example:
+                     *
+                     *      {
+                     *          "client_data": [
+                     *              {"fingerprint_0": ["41883b76db32fc45aecd", "198"]},
+                     *              {"fingerprint_1": ["f1c2c45a25d2ad94bdbc", "196"]},
+                     *          ]
+                     *      }
+                     *
+                     *      The comma at the end makes the JSON invalid, but Python can parse it correctly.
+                     */
+                    json << "{" << "\"fingerprint_" << fingerprint_index++ << "\"" << ":";
+                    json << "[" << "\"" << hash << "\"" << "," << "\"" << time1 << "\"" << "]" << "},";
                 }
             }
         }
     }
-    __android_log_print(ANDROID_LOG_VERBOSE, "My App", "JSON dump: %s", json.dump().c_str());
-    return json.dump();
+
+    json << "]" << "}";
+
+    __android_log_print(ANDROID_LOG_VERBOSE, "My App", "JSON dump: %s", json.str().c_str());
+    return json.str();
 }
 
 std::vector<std::pair<int, int>> Fingerprint::get_2D_peaks(cv::Mat &data) {
