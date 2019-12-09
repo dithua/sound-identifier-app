@@ -13,7 +13,7 @@
     <string name="connection_settings_summary">Click to change server\'s IP address</string>
     <string name="save_to_db_switch">Save track\'s info in My Library</string>
     <string name="save_recordings">Save recordings</string>
-    <string name="save_recordings_summary">Save recordings in internal storage</string>
+    <string name="save_recordings_summary">Save recordings into internal storage or SD card</string>
     <string name="geotagging_switch_title">Geotagging</string>
     <string name="geotagging_switch">Save location metadata in My Library</string>
     <string name="advanced_settings">Advanced Settings</string>
@@ -21,6 +21,8 @@
     <string name="playback_track_summary">Turn on to play the recorded audio</string>
     <string name="duration_recording">Duration of recording (in seconds)</string>
     <string name="duration_recording_summary">Click to set up the duration of the recording</string>
+    <string name="choose_audio_file">Choose audio file</string>
+    <string name="aac_supported">Only .aac file format is supported</string>
 
     <string name="recording_text_view">Recording in progress...</string>
     <string name="stop_recording_button">Stop</string>

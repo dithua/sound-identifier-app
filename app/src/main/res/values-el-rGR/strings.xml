@@ -13,7 +13,7 @@
     <string name="connection_settings_summary">Πατήστε για να αλλάξετε την διεύθυνση IP του διακομιστή</string>
     <string name="save_to_db_switch">Αποθήκευση πληροφοριών κομματιού στην Βιβλιοθήκη Μου</string>
     <string name="save_recordings">Αποθήκευση ηχογραφήσεων</string>
-    <string name="save_recordings_summary">Αποθήκευση ηχογραφήσεων στην εσωτερική μνήμη</string>
+    <string name="save_recordings_summary">Αποθήκευση ηχογραφήσεων στην εσωτερική μνήμη ή στην κάρτα SD</string>
     <string name="geotagging_switch">Αποθήκευση μεταδεδομένων τοποθεσίας στην Βιβλιοθήκη Μου</string>
     <string name="geotagging_switch_title">Γεωεντοπισμός</string>
     <string name="advanced_settings">Ρυθμίσεις για προχωρημένους</string>
@@ -21,6 +21,8 @@
     <string name="playback_track_summary">Ενεργοποιήστε για να ακούσετε την ηχογράφηση</string>
     <string name="duration_recording">Διάρκεια ηχογράφησης (σε δευτερόλεπτα)</string>
     <string name="duration_recording_summary">Επιλέξτε για να διαλέξετε πόσα δευτερόλεπτα θα διαρκεί η καταγραφη</string>
+    <string name="choose_audio_file">Διαλέξτε αρχείο ήχου</string>
+    <string name="aac_supported">Μόνο αρχεία τύπου .aac υποστηρίζονται</string>
 
     <string name="recording_text_view">Πραγματοποίειται ηχογράφηση...</string>
     <string name="stop_recording_button">Διακοπή</string>
