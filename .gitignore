@@ -10,5 +10,6 @@
 .DS_Store
 /build
 /captures
+example
 .externalNativeBuild
 .cxx
