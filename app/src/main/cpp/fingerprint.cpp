@@ -346,12 +346,32 @@ std::string Fingerprint::fingerprint(short *data, int data_size) {
 
 extern "C" {
 
-    JNIEXPORT void JNICALL Java_gr_geova_soundidentifier_AudioRecordActivity_fingerprint(JNIEnv *env, jobject thisObject, jshortArray channel_samples) {
+    JNIEXPORT jstring JNICALL Java_gr_geova_soundidentifier_AudioRecordActivity_fingerprint(JNIEnv *env, jobject thisObject, jshortArray channel_samples) {
         auto size = env->GetArrayLength(channel_samples);
         short data[size];
         env->GetShortArrayRegion(channel_samples, 0, size, &data[0]);
 
         Fingerprint f;
-        f.fingerprint(data, size);
+        std::string json_result = f.fingerprint(data, size);
+
+        // https://stackoverflow.com/questions/11621449/send-c-string-to-java-via-jni/24564937#24564937
+        auto json_result_length = json_result.length();
+        const jbyte* json_result_native = reinterpret_cast<const jbyte*>(json_result.c_str());
+        jbyteArray bytes = env->NewByteArray(json_result_length);
+        env->SetByteArrayRegion(bytes, 0, json_result_length, json_result_native);
+
+        jclass charsetClass = env->FindClass("java/nio/charset/Charset");
+        jmethodID forName = env->GetStaticMethodID(charsetClass,
+                "forName", "(Ljava/lang/String;)Ljava/nio/charset/Charset;");
+        jstring utf8 = env->NewStringUTF("UTF-8");
+        jobject charset = env->CallStaticObjectMethod(charsetClass, forName, utf8);
+
+        jclass stringClass = env->FindClass("java/lang/String");
+        jmethodID ctor = env->GetMethodID(
+                stringClass, "<init>", "([BLjava/nio/charset/Charset;)V");
+
+        jstring jMessage = reinterpret_cast<jstring>(env->NewObject(stringClass, ctor, bytes, charset));
+
+        return jMessage;
     }
 }

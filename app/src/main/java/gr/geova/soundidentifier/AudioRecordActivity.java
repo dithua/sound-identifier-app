@@ -40,7 +40,7 @@ public class AudioRecordActivity extends AppCompatActivity {
         System.loadLibrary("fingerprint-lib");
     }
 
-    private native void fingerprint(short[] doubles);
+    private native String fingerprint(short[] doubles);
 
     private static final String LOG_TAG = "AudioRecordActivity";
 
