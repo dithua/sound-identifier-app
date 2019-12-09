@@ -275,7 +275,6 @@ std::vector<std::pair<int, int>> Fingerprint::get_2D_peaks(cv::Mat &data) {
 
 std::string Fingerprint::fingerprint(short *data, int data_size) {
     std::vector<double> vec(&data[0], data + data_size);
-    // see mlab.py on how to decide number of frequencies
 
     int num_freqs = 0; // onesided
     if (DEFAULT_WINDOW_SIZE % 2 == 0) {
@@ -315,15 +314,17 @@ std::string Fingerprint::fingerprint(short *data, int data_size) {
 
     dst2 = dst2 * (1.0 / DEFAULT_FS);
     double sum = 0.0;
-    for (double &i : hann_window) {
-        i = std::abs(i);
-        i = std::pow(i, 2);
-        sum = sum + i;
+    for (double &item : hann_window) {
+        item = std::abs(item);
+        item = std::pow(item, 2);
+        sum = sum + item;
     }
 
     dst2 = dst2 * (1.0 / sum);
+    // mlab.py _spectral_helper C++ port ends here
+
     //see https://github.com/worldveil/dejavu/issues/118
-    float threshold = 0.00000001;
+    double threshold = 0.00000001;
     for (int i = 0; i < dst2.rows; i++) {
         for (int j = 0; j < dst2.cols; j++) {
             if ((dst2.at<double>(i, j)) < threshold) {
@@ -352,7 +353,7 @@ extern "C" {
         env->GetShortArrayRegion(channel_samples, 0, size, &data[0]);
 
         Fingerprint f;
-        std::string json_result = f.fingerprint(data, size);
+        auto json_result = f.fingerprint(data, size);
 
         // https://stackoverflow.com/questions/11621449/send-c-string-to-java-via-jni/24564937#24564937
         auto json_result_length = json_result.length();
