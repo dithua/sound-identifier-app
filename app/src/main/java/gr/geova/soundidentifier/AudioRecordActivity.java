@@ -133,6 +133,7 @@ public class AudioRecordActivity extends AppCompatActivity {
 
         if (!permissionToRecordAccepted) {
             finish();
+            return; // prevents the app from crashing!
         }
 
         recordingDuration = Integer.parseInt(sharedPreferences.getString("duration_recording", "10")) * 1_000; // in milliseconds
