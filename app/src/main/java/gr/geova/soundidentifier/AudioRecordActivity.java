@@ -1,6 +1,7 @@
 package gr.geova.soundidentifier;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
@@ -17,17 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
-import net.sourceforge.jaad.aac.AACException;
-import net.sourceforge.jaad.aac.Decoder;
-import net.sourceforge.jaad.aac.SampleBuffer;
-import net.sourceforge.jaad.adts.ADTSDemultiplexer;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -35,12 +26,6 @@ import java.util.Locale;
 // Portions of this code are from https://developer.android.com/guide/topics/media/mediarecorder. Licensed under Apache 2.0 (https://source.android.com/license).
 
 public class AudioRecordActivity extends AppCompatActivity {
-
-    static {
-        System.loadLibrary("fingerprint-lib");
-    }
-
-    private native String fingerprint(short[] doubles);
 
     private static final String LOG_TAG = "AudioRecordActivity";
 
@@ -162,85 +147,37 @@ public class AudioRecordActivity extends AppCompatActivity {
 
                 final boolean playback_track = sharedPreferences.getBoolean("playback_track", false);
 
+                // The following code deliberately blocks the UI.
                 if (playback_track) {
                     final MediaPlayer player = new MediaPlayer();
                     try {
                         player.setDataSource(fileName);
                         player.prepare();
                         player.start();
-                        player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+                        while (player.isPlaying()) {}
+
+                        player.stop();
+                        player.reset();
+                        player.release();
+
+                        // the below callback didn't block the UI
+                        /*player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                             @Override
                             public void onCompletion(MediaPlayer mp) {
                                 player.stop();
                                 player.reset();
                                 player.release();
                             }
-                        });
+                        });*/
                     } catch (IOException e) {
-                        Log.e(LOG_TAG, "prepare() failed");
+                        Log.e(LOG_TAG, "MediaPlayer's prepare() failed");
                     }
                 }
 
-                // TODO it works! But it has to be in another place!
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-                ADTSDemultiplexer adts = null;
-
-                try {
-                    adts = new ADTSDemultiplexer(new FileInputStream(fileName));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Decoder dec = null;
-                try {
-                    dec = new Decoder(adts.getDecoderSpecificInfo());
-                } catch (AACException e) {
-                    e.printStackTrace();
-                }
-                final SampleBuffer buf = new SampleBuffer();
-                byte[] frame;
-                while (true) {
-                    try {
-                        frame = adts.readNextFrame();
-                    } catch (Exception e) {
-                        break;
-                    }
-
-                    try {
-                        dec.decodeFrame(frame, buf);
-                    } catch (AACException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        outputStream.write(buf.getData());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                byte[] outputStreamByteArray = outputStream.toByteArray();
-                short[] shorts = new short[outputStreamByteArray.length / 2];
-                ByteBuffer.wrap(outputStreamByteArray).order(ByteOrder.BIG_ENDIAN).asShortBuffer().get(shorts);
-
-                if (adts.getChannelCount() == 2) {
-                    short[][] channels = new short[2][shorts.length / 2];
-
-                    int j = 0, k = 0;
-                    for (int i = 0; i < shorts.length; i++) {
-                        if (i % 2 == 0) {
-                            channels[0][j++] = shorts[i];
-                        } else {
-                            channels[1][k++] = shorts[i];
-                        }
-                    }
-
-                    fingerprint(channels[0]);
-                    fingerprint(channels[1]);
-                } else {
-                    fingerprint(shorts);
-                }
-
-                finish(); // exit activity
+                Intent i = new Intent(AudioRecordActivity.this, ResultsActivity.class);
+                i.putExtra("FILENAME", fileName);
+                startActivity(i);
             }
         }.start();
     }
@@ -253,15 +190,19 @@ public class AudioRecordActivity extends AppCompatActivity {
         }
     }
 
-    //TODO add default value 10 seconds (??)
     private void startRecording() {
+        if (fileName == null) {
+            Log.e(LOG_TAG, "You called startRecording() before setting up a filename!");
+            return;
+        }
+
         mediaRecorder = new MediaRecorder();
 
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
         mediaRecorder.setAudioChannels(2); // it isn't guaranteed that the audio channels will be 2 !!!
-        mediaRecorder.setAudioEncodingBitRate(16 * 44100); // TODO review this!
+        mediaRecorder.setAudioEncodingBitRate(16 * 44100);
         mediaRecorder.setMaxDuration(recordingDuration);
         mediaRecorder.setAudioSamplingRate(44100);
         mediaRecorder.setOutputFile(fileName);
@@ -269,7 +210,7 @@ public class AudioRecordActivity extends AppCompatActivity {
         try {
             mediaRecorder.prepare();
         } catch (IOException e) {
-            Log.e(LOG_TAG, "prepare() failed");
+            Log.e(LOG_TAG, "MediaRecorder's prepare() failed");
         }
 
         mediaRecorder.start();
