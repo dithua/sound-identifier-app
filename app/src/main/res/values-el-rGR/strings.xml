@@ -23,6 +23,7 @@
     <string name="duration_recording_summary">Επιλέξτε για να διαλέξετε πόσα δευτερόλεπτα θα διαρκεί η καταγραφη</string>
     <string name="choose_audio_file">Διαλέξτε αρχείο ήχου</string>
     <string name="aac_supported">Μόνο αρχεία τύπου .aac υποστηρίζονται</string>
+    <string name="results">Αποτελέσματα</string>
 
     <string name="recording_text_view">Πραγματοποίειται ηχογράφηση...</string>
     <string name="stop_recording_button">Διακοπή</string>
