@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "gr.geova.soundidentifier"
         minSdkVersion 24
@@ -15,7 +15,6 @@ android {
                 arguments "-DOpenCV_DIR=" + project(':opencv').projectDir + "/native/jni",
                         "-DANDROID_TOOLCHAIN=clang",
                         "-DANDROID_STL=c++_static"
-
             }
         }
 
@@ -32,22 +31,16 @@ android {
     buildTypes {
         release {
             // TODO change these to true for the release build
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
 
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            // TODO change the following to false
-            debuggable false
-            jniDebuggable false
+            // TODO change the following to false for the release build
+            debuggable true
+            jniDebuggable true
         }
     }
-
-    //sourceSets {
-    //    main {
-    //        jniLibs.srcDirs 'src/main/jniLibs/'
-    //    }
-    //}
 
     externalNativeBuild {
         cmake {
