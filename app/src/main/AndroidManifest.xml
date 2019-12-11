@@ -29,6 +29,11 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
+            android:name=".ResultsActivity"
+            android:label="@string/results"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
