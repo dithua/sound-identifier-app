@@ -23,6 +23,7 @@
     <string name="duration_recording_summary">Click to set up the duration of the recording</string>
     <string name="choose_audio_file">Choose audio file</string>
     <string name="aac_supported">Only .aac file format is supported</string>
+    <string name="results">Results</string>
 
     <string name="recording_text_view">Recording in progress...</string>
     <string name="stop_recording_button">Stop</string>
