@@ -127,9 +127,11 @@ public class AudioRecordActivity extends AppCompatActivity {
         onRecord(true);
 
         final ProgressBar progressBar = findViewById(R.id.progressBar);
+        final int countDownInterval = 1_000;
+
         progressBar.setProgress(0);
 
-        countDownTimer = new CountDownTimer(recordingDuration, 1_000) {
+        countDownTimer = new CountDownTimer(recordingDuration, countDownInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long elapsedTime = recordingDuration - millisUntilFinished;
@@ -142,6 +144,8 @@ public class AudioRecordActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 onRecord(false);
+
+                progressBar.setProgress(100);
 
                 recordingFinished = true;
 
@@ -191,6 +195,7 @@ public class AudioRecordActivity extends AppCompatActivity {
     }
 
     private void startRecording() {
+        // for dev purposes
         if (fileName == null) {
             Log.e(LOG_TAG, "You called startRecording() before setting up a filename!");
             return;

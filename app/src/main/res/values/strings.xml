@@ -24,9 +24,12 @@
     <string name="choose_audio_file">Choose audio file</string>
     <string name="aac_supported">Only .aac file format is supported</string>
     <string name="results">Results</string>
-
     <string name="recording_text_view">Recording in progress...</string>
     <string name="stop_recording_button">Stop</string>
+    <string name="generic_error_message">An error occurred.</string>
+    <string name="malformed_ip_address">The IP address you inserted is malformed.</string>
+    <string name="connection_error">Please check your Internet connection.</string>
+    <string name="no_result">No result</string>
     <!--<string name="title_activity_settings">Settings</string>-->
 
 </resources>

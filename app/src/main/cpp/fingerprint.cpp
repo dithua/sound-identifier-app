@@ -100,8 +100,8 @@ std::vector<double> Fingerprint::create_window(int window_size) {
     return res;
 }
 
-void Fingerprint::apply_window(std::vector<double> &hann_window,
-                               std::vector<std::vector<double>> &data) {
+void Fingerprint::apply_window(std::vector<double>& hann_window,
+                               std::vector<std::vector<double>>& data) {
     auto num_columns = data[0].size();
     auto num_rows = data.size();
     for (auto i = 0; i < num_columns; i++) {
@@ -111,10 +111,20 @@ void Fingerprint::apply_window(std::vector<double> &hann_window,
     }
 }
 
-std::string Fingerprint::generate_hashes(std::vector<std::pair<int, int>> &v_in) {
+inline std::string replace_occurrences(std::string json, const std::string& from,
+        const std::string& to) {
+    size_t start_pos = 0;
+    while((start_pos = json.find(from, start_pos)) != std::string::npos) {
+        json.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // TODO
+    }
+    return json;
+}
+
+std::string Fingerprint::generate_hashes(std::vector<std::pair<int, int>>& v_in) {
     //sorting
     //https://stackoverflow.com/questions/279854/how-do-i-sort-a-vector-of-pairs-based-on-the-second-element-of-the-pair
-    std::sort(v_in.begin(), v_in.end(), [](auto &left, auto &right) {
+    std::sort(v_in.begin(), v_in.end(), [](auto& left, auto& right) {
         if (left.second == right.second)
             return left.first < right.first;
         return left.second < right.second;
@@ -193,7 +203,7 @@ std::vector<std::pair<int, int>> Fingerprint::get_2D_peaks(cv::Mat &data) {
     cv::Mat detected_peaks = local_max ^ eroded_background; // my addition (^) -- it is '-' in the original
 
 #if 0
-    // for diagnostic reasons only
+    // for diagnostic purposes only
     auto i = 1;
     auto j = 6;
     while (i <= 3) {
@@ -276,7 +286,7 @@ std::vector<std::pair<int, int>> Fingerprint::get_2D_peaks(cv::Mat &data) {
 std::string Fingerprint::fingerprint(short *data, int data_size) {
     std::vector<double> vec(&data[0], data + data_size);
 
-    int num_freqs = 0; // onesided
+    int num_freqs = 0; // one-sided
     if (DEFAULT_WINDOW_SIZE % 2 == 0) {
         num_freqs = int(std::floor(DEFAULT_WINDOW_SIZE / 2)) + 1;
     } else {
@@ -347,7 +357,7 @@ std::string Fingerprint::fingerprint(short *data, int data_size) {
 
 extern "C" {
 
-    JNIEXPORT jstring JNICALL Java_gr_geova_soundidentifier_AudioRecordActivity_fingerprint(JNIEnv *env, jobject thisObject, jshortArray channel_samples) {
+    JNIEXPORT jstring JNICALL Java_gr_geova_soundidentifier_ResultsActivity_fingerprint(JNIEnv *env, jobject thisObject, jshortArray channel_samples) {
         auto size = env->GetArrayLength(channel_samples);
         short data[size];
         env->GetShortArrayRegion(channel_samples, 0, size, &data[0]);
@@ -357,21 +367,21 @@ extern "C" {
 
         // https://stackoverflow.com/questions/11621449/send-c-string-to-java-via-jni/24564937#24564937
         auto json_result_length = json_result.length();
-        const jbyte* json_result_native = reinterpret_cast<const jbyte*>(json_result.c_str());
+        auto json_result_native = reinterpret_cast<const jbyte*>(json_result.c_str());
         jbyteArray bytes = env->NewByteArray(json_result_length);
         env->SetByteArrayRegion(bytes, 0, json_result_length, json_result_native);
 
-        jclass charsetClass = env->FindClass("java/nio/charset/Charset");
-        jmethodID forName = env->GetStaticMethodID(charsetClass,
+        jclass charset_class = env->FindClass("java/nio/charset/Charset");
+        jmethodID forName = env->GetStaticMethodID(charset_class,
                 "forName", "(Ljava/lang/String;)Ljava/nio/charset/Charset;");
         jstring utf8 = env->NewStringUTF("UTF-8");
-        jobject charset = env->CallStaticObjectMethod(charsetClass, forName, utf8);
+        jobject charset = env->CallStaticObjectMethod(charset_class, forName, utf8);
 
-        jclass stringClass = env->FindClass("java/lang/String");
-        jmethodID ctor = env->GetMethodID(
-                stringClass, "<init>", "([BLjava/nio/charset/Charset;)V");
+        jclass string_class = env->FindClass("java/lang/String");
+        jmethodID method_id = env->GetMethodID(
+                string_class, "<init>", "([BLjava/nio/charset/Charset;)V");
 
-        jstring jMessage = reinterpret_cast<jstring>(env->NewObject(stringClass, ctor, bytes, charset));
+        auto jMessage = reinterpret_cast<jstring>(env->NewObject(string_class, method_id, bytes, charset));
 
         return jMessage;
     }
