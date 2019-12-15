@@ -62,7 +62,7 @@ public class AudioRecordActivity extends AppCompatActivity {
         final boolean keepRecordedFiles = sharedPreferences.getBoolean("keep_recorded_files_switch", false);
 
         if (keepRecordedFiles) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE-MM_d-yy_HH:mm:ss", Locale.US);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE dd-MM-yyyy HH:mm:ss", Locale.US);
 
             if (getExternalFilesDir(null) != null) {
                 Log.i(LOG_TAG, "getExternalFilesDir!");
