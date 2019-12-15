@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         Button recordButton = findViewById(R.id.record_button);
-        //Button openFileButton = findViewById(R.id.open_file_button);
+        Button openFileButton = findViewById(R.id.open_file_button);
 
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -32,19 +32,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*openFileButton.setOnClickListener(new View.OnClickListener() {
+        openFileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent file = new Intent(Intent.ACTION_GET_CONTENT);
-
-                Uri uri = Uri.parse(getApplicationContext().getExternalFilesDir(null).getAbsolutePath());
-
-                // There is only support for AAC, since that's the only decoding library we have at the moment!
-                file.setDataAndType(uri, "audio/aac");
-                file = Intent.createChooser(file, getString(R.string.choose_audio_file));
-                startActivityForResult(file, PICK_FILE_RESULT_CODE);
+                Intent i = new Intent(MainActivity.this, ListFilesActivity.class);
+                startActivity(i);
             }
-        });*/
+        });
     }
 
     @Override
