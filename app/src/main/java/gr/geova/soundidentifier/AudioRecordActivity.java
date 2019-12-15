@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -64,8 +65,10 @@ public class AudioRecordActivity extends AppCompatActivity {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE-MM_d-yy_HH:mm:ss", Locale.US);
 
             if (getExternalFilesDir(null) != null) {
+                Log.i(LOG_TAG, "getExternalFilesDir!");
                 fileName = getExternalFilesDir(null).getAbsolutePath();
             } else {
+                Log.i(LOG_TAG, "getFilesDir!");
                 fileName = getFilesDir().getAbsolutePath();
             }
 
@@ -73,8 +76,10 @@ public class AudioRecordActivity extends AppCompatActivity {
         } else {
 
             if (getExternalCacheDir() != null) {
+                Log.i(LOG_TAG, "getExternalCacheDir!");
                 fileName = getExternalCacheDir().getAbsolutePath();
             } else {
+                Log.i(LOG_TAG, "getCacheDir!");
                 fileName = getCacheDir().getAbsolutePath();
             }
 
@@ -105,6 +110,7 @@ public class AudioRecordActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!recordingFinished) {
                     onRecord(false);
+                    new File(fileName).delete();
                     cancelTimer();
                     finish(); // exit activity
                 }
