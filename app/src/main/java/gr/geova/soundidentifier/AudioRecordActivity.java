@@ -72,7 +72,7 @@ public class AudioRecordActivity extends AppCompatActivity {
                 fileName = getFilesDir().getAbsolutePath();
             }
 
-            fileName += "/" + simpleDateFormat.format(new Date()) + ".aac";
+            fileName += File.separator + simpleDateFormat.format(new Date()) + ".aac";
         } else {
 
             if (getExternalCacheDir() != null) {
@@ -83,7 +83,7 @@ public class AudioRecordActivity extends AppCompatActivity {
                 fileName = getCacheDir().getAbsolutePath();
             }
 
-            fileName += "/audiorecordtest.aac";
+            fileName += File.separator + "audiorecordtest.aac";
         }
 
         Log.i(LOG_TAG, "filename is : " + fileName);
@@ -155,10 +155,11 @@ public class AudioRecordActivity extends AppCompatActivity {
 
                 recordingFinished = true;
 
-                final boolean playback_track = sharedPreferences.getBoolean("playback_track", false);
+                // TODO playbackTrack && keepRecordedFiles do not work together!
+                final boolean playbackTrack = sharedPreferences.getBoolean("playback_track_switch", false);
 
                 // The following code deliberately blocks the UI.
-                if (playback_track) {
+                if (playbackTrack) {
                     final MediaPlayer player = new MediaPlayer();
                     try {
                         player.setDataSource(fileName);
@@ -212,7 +213,7 @@ public class AudioRecordActivity extends AppCompatActivity {
         mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
         mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        mediaRecorder.setAudioChannels(2); // it isn't guaranteed that the audio channels will be 2 !!!
+        mediaRecorder.setAudioChannels(1); // why have 2 channels when most Android devices have mono mics?
         mediaRecorder.setAudioEncodingBitRate(16 * 44100);
         mediaRecorder.setMaxDuration(recordingDuration);
         mediaRecorder.setAudioSamplingRate(44100);

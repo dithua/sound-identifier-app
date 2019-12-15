@@ -22,6 +22,11 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
+            android:name=".ListFilesActivity"
+            android:label="@string/list_files"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name=".AudioRecordActivity"
             android:label="@string/audio_record_activity"
             android:screenOrientation="portrait">

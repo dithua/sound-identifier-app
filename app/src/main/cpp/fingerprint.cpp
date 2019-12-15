@@ -113,10 +113,10 @@ void Fingerprint::apply_window(std::vector<double>& hann_window,
 
 inline std::string replace_occurrences(std::string json, const std::string& from,
         const std::string& to) {
-    size_t start_pos = 0;
-    while((start_pos = json.find(from, start_pos)) != std::string::npos) {
-        json.replace(start_pos, from.length(), to);
-        start_pos += to.length(); // TODO
+    size_t position = 0;
+    while((position = json.find(from, position)) != std::string::npos) {
+        json.replace(position, from.length(), to);
+        position += to.length();
     }
     return json;
 }
@@ -133,10 +133,15 @@ std::string Fingerprint::generate_hashes(std::vector<std::pair<int, int>>& v_in)
     SHA1 checksum;
 
     std::stringstream json;
-    json << "{";
-    json << "\"client_data\": [";
 
+#define ONE_CHANNEL
+#if defined(ONE_CHANNEL)
     auto fingerprint_index = 0;
+#else
+    // It may cause issues!!!
+    // I made this variable static to keep the index after passing the 2nd channel
+    static auto fingerprint_index = 0;
+#endif
 
     for (int i = 0; i < v_in.size(); i++) {
         for (int j = 1; j < DEFAULT_FAN_VALUE; j++) {
@@ -159,31 +164,39 @@ std::string Fingerprint::generate_hashes(std::vector<std::pair<int, int>>& v_in)
 
                     std::string hash = checksum.final().erase(FINGERPRINT_REDUCTION, 40); // keep the first 20 hex characters
 
-                    /*  JSON example:
+                    // this jsonify process produces an invalid JSON
+                    // the JSON becomes valid later (in both native and Java code)
+                    /*
+                     * The below lines produces this:
                      *
-                     *      {
-                     *          "client_data": [
-                     *              {"fingerprint_0": ["41883b76db32fc45aecd", "198"]},
-                     *              {"fingerprint_1": ["f1c2c45a25d2ad94bdbc", "196"]},
-                     *          ]
-                     *      }
-                     *
-                     *      The comma at the end makes the JSON invalid, but Python can parse it correctly.
+                     *      "fingerprint_0": ["<hash>", "<time1>"]
+                     *      "fingerprint_1": ["<hash>", "<time1>"] etc...
                      */
-                    json << "{" << "\"fingerprint_" << fingerprint_index++ << "\"" << ":";
-                    json << "[" << "\"" << hash << "\"" << "," << "\"" << time1 << "\"" << "]" << "},";
+                    json << "\"fingerprint_" << fingerprint_index++ << "\"" << ":";
+                    json << "[" << "\"" << hash << "\"" << "," << "\"" << time1 << "\"" << "]";
                 }
             }
         }
     }
 
-    json << "]" << "}";
+    // partial fix of json
+    /*
+     * After running replace_ocurrences, we have:
+     *
+     *      "fingerprint_0": ["<hash>", "<time1>"],
+     *      "fingerprint_1": ["<hash>", "<time1>"], etc...
+     *
+     * Notice the comma at the end of each line.
+     *
+     */
+    std::string JSON = replace_occurrences(json.str(), "]\"", "],\"");
 
-    __android_log_print(ANDROID_LOG_VERBOSE, "My App", "JSON dump: %s", json.str().c_str());
-    return json.str();
+    __android_log_print(ANDROID_LOG_VERBOSE, "My App", "JSON dump: %s", JSON.c_str());
+
+    return JSON;
 }
 
-std::vector<std::pair<int, int>> Fingerprint::get_2D_peaks(cv::Mat &data) {
+std::vector<std::pair<int, int>> Fingerprint::get_2D_peaks(cv::Mat& data) {
     // generate binary structure and apply maximum filter
     cv::Mat tmpkernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3), cv::Point(-1, -1)); // equals to generate_structure(2, 1) from dejavu
 
@@ -325,7 +338,7 @@ std::string Fingerprint::fingerprint(short *data, int data_size) {
     dst2 = dst2 * (1.0 / DEFAULT_FS);
     double sum = 0.0;
     for (double &item : hann_window) {
-        item = std::abs(item);
+        item = std::abs(item); // overkill, I know, since we call pow2 after that TODO review it (look at the Python code, too!)
         item = std::pow(item, 2);
         sum = sum + item;
     }

@@ -4,6 +4,7 @@
     <string name="action_settings">Ρυθμίσεις</string>
     <string name="audio_record_activity">Καταγραφή ήχου</string>
     <string name="open_file">Άνοιγμα αρχείου</string>
+    <string name="list_files">Αποθηκευμένα αρχεία ήχου</string>
     <string name="record_button">Ηχογράφηση</string>
     <string name="basic_settings">Βασικές ρυθμίσεις</string>
     <string name="clear_my_library">Διαγραφή καταχωρίσεων από την Βιβλιοθήκη Μου</string>
@@ -13,7 +14,7 @@
     <string name="connection_settings_summary">Πατήστε για να αλλάξετε την διεύθυνση IP του διακομιστή</string>
     <string name="save_to_db_switch">Αποθήκευση πληροφοριών κομματιού στην Βιβλιοθήκη Μου</string>
     <string name="save_recordings">Αποθήκευση ηχογραφήσεων</string>
-    <string name="save_recordings_summary">Αποθήκευση ηχογραφήσεων στην εσωτερική μνήμη ή στην κάρτα SD</string>
+    <string name="save_recordings_summary">Αποθήκευση ηχογραφήσεων στη συσκευή</string>
     <string name="geotagging_switch">Αποθήκευση μεταδεδομένων τοποθεσίας στην Βιβλιοθήκη Μου</string>
     <string name="geotagging_switch_title">Γεωεντοπισμός</string>
     <string name="advanced_settings">Ρυθμίσεις για προχωρημένους</string>
@@ -24,10 +25,10 @@
     <string name="choose_audio_file">Διαλέξτε αρχείο ήχου</string>
     <string name="aac_supported">Μόνο αρχεία τύπου .aac υποστηρίζονται</string>
     <string name="results">Αποτελέσματα</string>
-    <string name="recording_text_view">Πραγματοποίειται ηχογράφηση...</string>
+    <string name="recording_text_view">Πραγματοποίειται ηχογράφηση…</string>
     <string name="stop_recording_button">Διακοπή</string>
     <string name="generic_error_message">Ένα σφάλμα συνέβη.</string>
     <string name="malformed_ip_address">Η διεύθυνση IP που εισάγατε είναι λάθος.</string>
-    <string name="connection_error">Παρακαλώ ελέγξτε τη σύνδεση στο Internet.</string>
+    <string name="connection_error">Παρακαλώ ελέγξτε τη σύνδεση στο Internet ή τις ρυθμίσεις σύνδεσης.</string>
     <string name="no_result">Κανένα αποτέλεσμα</string>
 </resources>

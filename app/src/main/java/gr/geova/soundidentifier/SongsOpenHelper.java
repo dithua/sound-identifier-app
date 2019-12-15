@@ -11,7 +11,6 @@ public class SongsOpenHelper extends SQLiteOpenHelper {
     public static final String DB_NAME = "DB_NAME"; // TODO fix this
 
     public static final String SONG_NAME = "song_name";
-    public static final String ARTIST_NAME = "artist_name";
 
     public SongsOpenHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
