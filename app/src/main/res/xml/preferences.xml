@@ -38,7 +38,7 @@
             app:defaultValue="false" />
         <SwitchPreferenceCompat
             app:title="@string/playback_track"
-            app:key="playback_track"
+            app:key="playback_track_switch"
             app:summary="@string/playback_track_summary"
             app:defaultValue="false" />
     </PreferenceCategory>
