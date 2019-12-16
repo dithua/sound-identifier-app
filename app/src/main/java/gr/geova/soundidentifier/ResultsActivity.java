@@ -114,24 +114,6 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         return shorts;
     }
 
-    @Deprecated
-    private short[][] getTwoChannelData(short[] PCMData) {
-        short[][] channels = new short[channelCount][PCMData.length / 2];
-
-        int j = 0, k = 0;
-        for (int i = 0; i < PCMData.length; i++) {
-            if (i % 2 == 0) {
-                // even indices of PCMData are the data for the 1st channel
-                channels[0][j++] = PCMData[i];
-            } else {
-                // odd indices of PCMData are the data for the 2nd channel
-                channels[1][k++] = PCMData[i];
-            }
-        }
-
-        return channels;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
