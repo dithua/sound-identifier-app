@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Αναγνώριση ήχου</string>
+
     <string name="action_settings">Ρυθμίσεις</string>
+    <string name="action_my_library">Η Βιβλιοθήκη Μου</string>
+    <string name="action_about">Σχετικά με την εφαρμογή</string>
+
     <string name="audio_record_activity">Καταγραφή ήχου</string>
     <string name="open_file">Άνοιγμα αρχείου</string>
     <string name="list_files">Αποθηκευμένα αρχεία ήχου</string>
@@ -10,20 +14,19 @@
     <string name="clear_my_library">Διαγραφή καταχωρίσεων από την Βιβλιοθήκη Μου</string>
     <string name="connection_settings">Ρυθμίσεις σύνδεσης στον διακομιστή</string>
     <string name="connection_settings_title">Ρυθμίσεις σύνδεσης</string>
-    <string name="action_my_library">Η Βιβλιοθήκη Μου</string>
     <string name="connection_settings_summary">Πατήστε για να αλλάξετε την διεύθυνση IP του διακομιστή</string>
     <string name="save_to_db_switch">Αποθήκευση πληροφοριών κομματιού στην Βιβλιοθήκη Μου</string>
     <string name="save_recordings">Αποθήκευση ηχογραφήσεων</string>
     <string name="save_recordings_summary">Αποθήκευση ηχογραφήσεων στη συσκευή</string>
-    <string name="geotagging_switch">Αποθήκευση μεταδεδομένων τοποθεσίας στην Βιβλιοθήκη Μου</string>
-    <string name="geotagging_switch_title">Γεωεντοπισμός</string>
+    <!--<string name="geotagging_switch">Αποθήκευση μεταδεδομένων τοποθεσίας στην Βιβλιοθήκη Μου</string>
+    <string name="geotagging_switch_title">Γεωεντοπισμός</string>-->
     <string name="advanced_settings">Ρυθμίσεις για προχωρημένους</string>
     <string name="playback_track">Αναπαραγωγή ηχογράφησης</string>
     <string name="playback_track_summary">Ενεργοποιήστε για να ακούσετε την ηχογράφηση</string>
     <string name="duration_recording">Διάρκεια ηχογράφησης (σε δευτερόλεπτα)</string>
     <string name="duration_recording_summary">Επιλέξτε για να διαλέξετε πόσα δευτερόλεπτα θα διαρκεί η καταγραφη</string>
     <string name="choose_audio_file">Διαλέξτε αρχείο ήχου</string>
-    <string name="aac_supported">Μόνο αρχεία τύπου .aac υποστηρίζονται</string>
+    <!--<string name="aac_supported">Μόνο αρχεία τύπου .aac υποστηρίζονται</string>-->
     <string name="results">Αποτελέσματα</string>
     <string name="recording_text_view">Πραγματοποίειται ηχογράφηση…</string>
     <string name="stop_recording_button">Διακοπή</string>
@@ -31,4 +34,17 @@
     <string name="malformed_ip_address">Η διεύθυνση IP που εισάγατε είναι λάθος.</string>
     <string name="connection_error">Παρακαλώ ελέγξτε τη σύνδεση στο Internet ή τις ρυθμίσεις σύνδεσης.</string>
     <string name="no_result">Κανένα αποτέλεσμα</string>
+
+    <string name="notification">Ειδοποίηση</string>
+    <string name="noRecord">Δεν υπάρχει κάτι διαθέσιμο</string>
+
+    <string name="audio_title">Τίτλος</string>
+    <string name="date">Ημερομηνία</string>
+
+    <string name="warning">Προσοχή</string>
+    <string name="clear_my_library_dialog">Θέλετε να διαγράψετε τις καταχωρίσεις από την Βιβλιοθήκη Μου;</string>
+
+    <string name="yes">Ναι</string>
+    <string name="no">Όχι</string>
 </resources>
+

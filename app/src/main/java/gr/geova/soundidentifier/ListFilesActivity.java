@@ -1,5 +1,6 @@
 package gr.geova.soundidentifier;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
@@ -54,14 +56,24 @@ public class ListFilesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_files);
 
-        ListView resultsListView = findViewById(R.id.resultsListView);
+        ListView resultsListView = findViewById(R.id.filesListView);
 
         final File directory = setDirectory();
 
         List<String> fileNameList = getFileNames(directory.listFiles());
 
-        if (fileNameList == null) {
-            return;
+        if (fileNameList == null || fileNameList.isEmpty()) {
+            AlertDialog alertDialog = new AlertDialog.Builder(ListFilesActivity.this).create();
+            alertDialog.setTitle(getResources().getString(R.string.notification));
+            alertDialog.setMessage(getResources().getString(R.string.noRecord));
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+            alertDialog.show();
         }
 
         final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, fileNameList.toArray());
@@ -105,6 +117,10 @@ public class ListFilesActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.my_library) {
             Intent i = new Intent(ListFilesActivity.this, MyLibraryActivity.class);
+            startActivity(i);
+            return true;
+        } else if (id == R.id.about) {
+            Intent i = new Intent(ListFilesActivity.this, AboutActivity.class);
             startActivity(i);
             return true;
         }

@@ -1,8 +1,10 @@
 package gr.geova.soundidentifier;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,7 +15,6 @@ import android.util.TypedValue;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
@@ -50,6 +51,10 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
     private static final String LOG_TAG = "ResultsActivity";
     private static SharedPreferences sharedPreferences = null;
+
+    private final LibraryHelper libraryHelper = LibraryHelper.getInstance(this);
+    private boolean saveToDB;
+
     private TextView songText, noResultText;
     private SendAndReceiveData asyncTask = new SendAndReceiveData();
     private boolean ran = false; // TODO find something better
@@ -65,7 +70,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
             //channelCount = adts.getChannelCount();
         } catch (IOException e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e(LOG_TAG, e.getMessage());
             return null;
         }
 
@@ -73,7 +78,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         try {
             dec = new Decoder(adts.getDecoderSpecificInfo());
         } catch (AACException e) {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e(LOG_TAG, e.getMessage());
             return null;
         }
 
@@ -89,14 +94,14 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
             try {
                 dec.decodeFrame(frame, buf);
             } catch (AACException e) {
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(LOG_TAG, e.getMessage());
                 return null;
             }
 
             try {
                 outputStream.write(buf.getData());
             } catch (IOException e) {
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e(LOG_TAG, e.getMessage());
                 return null;
             }
         }
@@ -110,7 +115,6 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
     }
 
     @Deprecated
-    @NonNull
     private short[][] getTwoChannelData(short[] PCMData) {
         short[][] channels = new short[channelCount][PCMData.length / 2];
 
@@ -135,17 +139,16 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
+        saveToDB = sharedPreferences.getBoolean("save_to_db_switch", true);
+
         songText = findViewById(R.id.song_title);
         noResultText = findViewById(R.id.no_result);
-
-        /*songText.setVisibility(View.INVISIBLE);
-        noResultText.setVisibility(View.INVISIBLE);*/
 
         asyncTask.delegate = this;
     }
 
     private String getJSON(short[] shorts) {
-        String json, json1, json2;
+        /*String json, json1, json2;
 
         if (channelCount == 1) {
             json1 = fingerprint(shorts);
@@ -159,9 +162,9 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
             // last fix of json. Added "{" and "}".
             json = String.format("{%s,%s}", json1, json2);
-        }
+        }*/
 
-        return json;
+        return String.format("{%s}", fingerprint(shorts));
     }
 
     @Override
@@ -208,6 +211,21 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         }
     }
 
+    private void insertToDB(String songName) {
+        SQLiteDatabase db = libraryHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(LibraryHelper.COLUMN_SONG_NAME, songName);
+
+        long result = db.insert(LibraryHelper.TABLE_NAME, null, values);
+
+        if (result == -1) {
+            Log.e(LOG_TAG, "DB insert() returned -1");
+        }
+
+        db.close();
+    }
+
     @Override
     public void processFinish(String responseData) {
         switch (responseData) {
@@ -234,11 +252,16 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         try {
             JSONObject jsonObject = new JSONObject(responseData);
 
-            String songName = jsonObject.getString(SongsOpenHelper.SONG_NAME);
+            String songName = jsonObject.getString(LibraryHelper.COLUMN_SONG_NAME);
 
             songText.setText(songName);
 
             songText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f); // TODO add support for different kinds of screens
+
+            if (saveToDB) {
+                insertToDB(songName);
+            }
+
         } catch (JSONException e) {
             Toast.makeText(this, R.string.generic_error_message, Toast.LENGTH_SHORT).show();
             Log.e(LOG_TAG, e.getMessage());

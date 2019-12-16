@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!--<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />-->
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:required="false"/>
+    <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:required="false"/>-->
 
     <application
         android:allowBackup="true"
@@ -39,6 +39,11 @@
         <activity
             android:name=".ResultsActivity"
             android:label="@string/results"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/action_about"
             android:screenOrientation="portrait">
         </activity>
         <activity

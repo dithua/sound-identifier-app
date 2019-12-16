@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ListFilesActivity">
+    tools:context=".MyLibraryActivity">
 
     <ListView
-        android:id="@+id/filesListView"
+        android:id="@+id/myLibraryListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="5dp"
