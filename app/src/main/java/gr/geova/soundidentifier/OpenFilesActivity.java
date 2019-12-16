@@ -18,9 +18,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListFilesActivity extends AppCompatActivity {
+public class OpenFilesActivity extends AppCompatActivity {
 
-    private static final String LOG_TAG = "ListFilesActivity";
+    private static final String LOG_TAG = "OpenFilesActivity";
 
     private File setDirectory() {
         File directory;
@@ -63,7 +63,7 @@ public class ListFilesActivity extends AppCompatActivity {
         List<String> fileNameList = getFileNames(directory.listFiles());
 
         if (fileNameList == null || fileNameList.isEmpty()) {
-            AlertDialog alertDialog = new AlertDialog.Builder(ListFilesActivity.this).create();
+            AlertDialog alertDialog = new AlertDialog.Builder(OpenFilesActivity.this).create();
             alertDialog.setTitle(getResources().getString(R.string.notification));
             alertDialog.setMessage(getResources().getString(R.string.noRecord));
             alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "OK",
@@ -88,7 +88,7 @@ public class ListFilesActivity extends AppCompatActivity {
 
                 // TODO insert Dialog (YES, NO) to playback track before sending it into the other activity
 
-                Intent i = new Intent(ListFilesActivity.this, ResultsActivity.class);
+                Intent i = new Intent(OpenFilesActivity.this, ResultsActivity.class);
                 i.putExtra("FILENAME", fileName);
 
                 startActivity(i);
@@ -112,15 +112,15 @@ public class ListFilesActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent i = new Intent(ListFilesActivity.this, SettingsActivity.class);
+            Intent i = new Intent(OpenFilesActivity.this, SettingsActivity.class);
             startActivity(i);
             return true;
         } else if (id == R.id.my_library) {
-            Intent i = new Intent(ListFilesActivity.this, MyLibraryActivity.class);
+            Intent i = new Intent(OpenFilesActivity.this, MyLibraryActivity.class);
             startActivity(i);
             return true;
         } else if (id == R.id.about) {
-            Intent i = new Intent(ListFilesActivity.this, AboutActivity.class);
+            Intent i = new Intent(OpenFilesActivity.this, AboutActivity.class);
             startActivity(i);
             return true;
         }

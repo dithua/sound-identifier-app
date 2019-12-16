@@ -22,7 +22,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".ListFilesActivity"
+            android:name=".OpenFilesActivity"
             android:label="@string/list_files"
             android:screenOrientation="portrait" >
         </activity>
