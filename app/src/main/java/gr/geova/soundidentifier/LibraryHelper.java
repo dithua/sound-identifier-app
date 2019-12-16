@@ -16,10 +16,7 @@ public class LibraryHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "LIBRARY_DB";
     private static final int DATABASE_VERSION = 1;
-    private static final String CREATE_TABLE = String.format(
-            "CREATE TABLE IF NOT EXISTS %s (%s INTEGER PRIMARY KEY AUTOINCREMENT, %s VARCHAR(150) NOT NULL, %s DATETIME DEFAULT CURRENT_TIMESTAMP);",
-            TABLE_NAME, _ID, COLUMN_SONG_NAME, COLUMN_DATE
-    );
+    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_SONG_NAME + " VARCHAR(150) NOT NULL, " + COLUMN_DATE + " REAL DEFAULT (datetime('now', 'localtime')));";
 
     public static synchronized LibraryHelper getInstance(Context context) {
         if (libraryHelperInstance == null) {

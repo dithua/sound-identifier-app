@@ -80,13 +80,15 @@ public class OpenFilesActivity extends AppCompatActivity {
 
         resultsListView.setAdapter(adapter);
 
+
+        // TODO when an item is LONG CLICKED, display a dialog with 2 options: "Play" and "Delete File"
+
         resultsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String fileName = directory.getAbsolutePath() + File.separator + adapter.getItem(position);
-                Log.i(LOG_TAG, "Filename is " + fileName);
 
-                // TODO insert Dialog (YES, NO) to playback track before sending it into the other activity
+                Log.i(LOG_TAG, "Filename is " + fileName);
 
                 Intent i = new Intent(OpenFilesActivity.this, ResultsActivity.class);
                 i.putExtra("FILENAME", fileName);

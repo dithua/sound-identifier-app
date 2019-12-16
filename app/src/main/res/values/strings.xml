@@ -38,8 +38,8 @@
     <string name="notification">Notification</string>
     <string name="noRecord">Nothing to show</string>
 
-    <string name="audio_title">Title</string>
-    <string name="date">Date</string>
+    <string name="audio_title">Title </string>
+    <string name="date">Date </string>
 
     <string name="warning">Warning</string>
     <string name="clear_my_library_dialog">You are about to delete the contents of My Library. Do you wish to proceed?</string>

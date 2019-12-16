@@ -58,7 +58,6 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
     private TextView songText, noResultText;
     private SendAndReceiveData asyncTask = new SendAndReceiveData();
     private boolean ran = false; // TODO find something better
-    private final int channelCount = 1; // made channelCount final, because the audio channels are now only one.
 
     @Nullable
     private short[] getPCMData(final String fileName) {
@@ -67,8 +66,6 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
         try {
             adts = new ADTSDemultiplexer(new FileInputStream(fileName));
-
-            //channelCount = adts.getChannelCount();
         } catch (IOException e) {
             Log.e(LOG_TAG, e.getMessage());
             return null;
@@ -183,6 +180,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
         if (result == -1) {
             Log.e(LOG_TAG, "DB insert() returned -1");
+            Toast.makeText(this, "Insert to database failed.", Toast.LENGTH_SHORT).show(); // TODO strings.xml
         }
 
         db.close();
@@ -204,9 +202,10 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
         vibrateDevice();
 
+        // No result -- server sent "404 Not Found"
         if (responseData.isEmpty()) {
             noResultText.setText(R.string.no_result);
-            noResultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f);
+            noResultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f); // TODO text size
 
             return;
         }
@@ -218,7 +217,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
             songText.setText(songName);
 
-            songText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f); // TODO add support for different kinds of screens
+            songText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f); // TODO text size
 
             if (saveToDB) {
                 insertToDB(songName);
@@ -238,7 +237,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
             final String IPAddress = sharedPreferences.getString("connection_settings_edit_text", "");
             final String port = "8080";
 
-            final String URL = String.format("http://%s:%s/retrieve", IPAddress, port);
+            final String URL = "http://" + IPAddress + ":" + port + "/retrieve";
 
             Log.i(LOG_TAG, URL);
 
@@ -280,7 +279,8 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
                     return "";
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(LOG_TAG, "GENERIC " + e.getMessage());
+                return ErrorCodes.IO_EXCEPTION_GENERIC;
             }
 
             StringBuilder response = new StringBuilder();

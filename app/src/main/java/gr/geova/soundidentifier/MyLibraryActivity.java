@@ -2,7 +2,6 @@ package gr.geova.soundidentifier;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -26,10 +25,10 @@ public class MyLibraryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mylibrary);
 
-        ListView resultsListView = findViewById(R.id.myLibraryListView);
-        List<String> resultsList = fetchDataFromDB();
+        ListView audioListView = findViewById(R.id.myLibraryListView);
+        List<String> audioList = fetchDataFromDB();
 
-        if (resultsList == null) {
+        if (audioList == null) {
             AlertDialog alertDialog = new AlertDialog.Builder(MyLibraryActivity.this).create();
             alertDialog.setTitle(getResources().getString(R.string.notification));
             alertDialog.setMessage(getResources().getString(R.string.noRecord));
@@ -42,29 +41,27 @@ public class MyLibraryActivity extends AppCompatActivity {
                     });
             alertDialog.show();
         } else {
-            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, resultsList.toArray());
-            resultsListView.setAdapter(adapter);
+            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, audioList.toArray());
+            audioListView.setAdapter(adapter);
         }
     }
 
     private List<String> fetchDataFromDB() {
         SQLiteDatabase db = libraryHelper.getReadableDatabase();
 
-        List<String> results = new ArrayList<>();
-        String result;
+        List<String> records = new ArrayList<>();
+        String record;
 
-        Resources resources = getResources();
-
-        String audioTitle = resources.getString(R.string.audio_title);
-        String date = resources.getString(R.string.date);
+        String audioTitle = getResources().getString(R.string.audio_title); // includes space at the end
+        String date = getResources().getString(R.string.date); // includes space at the end
 
         Cursor cursor = db.query(LibraryHelper.TABLE_NAME, null, null, null, null, null, "_ID DESC");
         if (cursor.moveToFirst()) {
             do {
-                result = String.format("%s: %s\n%s: %s", audioTitle, cursor.getString(cursor.getColumnIndex(LibraryHelper.COLUMN_SONG_NAME)),
-                        date, cursor.getString(cursor.getColumnIndex(LibraryHelper.COLUMN_DATE)));
+                record = audioTitle + cursor.getString(cursor.getColumnIndex(LibraryHelper.COLUMN_SONG_NAME)) + "\n" +
+                        date + cursor.getString(cursor.getColumnIndex(LibraryHelper.COLUMN_DATE));
 
-                results.add(result);
+                records.add(record);
             } while (cursor.moveToNext());
         } else {
             return null;
@@ -73,7 +70,7 @@ public class MyLibraryActivity extends AppCompatActivity {
         cursor.close();
         db.close();
 
-        return results;
+        return records;
     }
 
     @Override

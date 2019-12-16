@@ -38,8 +38,8 @@
     <string name="notification">Ειδοποίηση</string>
     <string name="noRecord">Δεν υπάρχει κάτι διαθέσιμο</string>
 
-    <string name="audio_title">Τίτλος</string>
-    <string name="date">Ημερομηνία</string>
+    <string name="audio_title">Τίτλος </string>
+    <string name="date">Ημερομηνία </string>
 
     <string name="warning">Προσοχή</string>
     <string name="clear_my_library_dialog">Θέλετε να διαγράψετε τις καταχωρίσεις από την Βιβλιοθήκη Μου;</string>
