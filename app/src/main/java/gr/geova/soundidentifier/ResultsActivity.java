@@ -147,26 +147,6 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         asyncTask.delegate = this;
     }
 
-    private String getJSON(short[] shorts) {
-        /*String json, json1, json2;
-
-        if (channelCount == 1) {
-            json1 = fingerprint(shorts);
-
-            json = String.format("{%s}", json1);
-        } else {
-            short[][] channels = getTwoChannelData(shorts);
-
-            json1 = fingerprint(channels[0]);
-            json2 = fingerprint(channels[1]);
-
-            // last fix of json. Added "{" and "}".
-            json = String.format("{%s,%s}", json1, json2);
-        }*/
-
-        return String.format("{%s}", fingerprint(shorts));
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -181,7 +161,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
             return;
         }
 
-        String json = getJSON(shorts);
+        String json = fingerprint(shorts);
 
         if (json.isEmpty()) {
             Toast.makeText(this, R.string.generic_error_message, Toast.LENGTH_LONG).show();

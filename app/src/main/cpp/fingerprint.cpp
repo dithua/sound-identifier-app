@@ -133,15 +133,9 @@ std::string Fingerprint::generate_hashes(std::vector<std::pair<int, int>>& v_in)
     SHA1 checksum;
 
     std::stringstream json;
+    json << "{";
 
-#define ONE_CHANNEL
-#if defined(ONE_CHANNEL)
     auto fingerprint_index = 0;
-#else
-    // It may cause issues!!!
-    // I made this variable static to keep the index after passing the 2nd channel
-    static auto fingerprint_index = 0;
-#endif
 
     for (int i = 0; i < v_in.size(); i++) {
         for (int j = 1; j < DEFAULT_FAN_VALUE; j++) {
@@ -165,26 +159,29 @@ std::string Fingerprint::generate_hashes(std::vector<std::pair<int, int>>& v_in)
                     std::string hash = checksum.final().erase(FINGERPRINT_REDUCTION, 40); // keep the first 20 hex characters
 
                     // this jsonify process produces an invalid JSON
-                    // the JSON becomes valid later (in both native and Java code)
+                    // the JSON becomes valid later
                     /*
                      * The below lines produces this:
-                     *
+                     *  {
                      *      "fingerprint_0": ["<hash>", "<time1>"]
                      *      "fingerprint_1": ["<hash>", "<time1>"] etc...
+                     *  }
                      */
                     json << "\"fingerprint_" << fingerprint_index++ << "\"" << ":";
-                    json << "[" << "\"" << hash << "\"" << "," << "\"" << time1 << "\"" << "]";
+                    json << "[" << "\"" << hash << "\"" << "," << time1 << "]";
                 }
             }
         }
     }
 
-    // partial fix of json
+    json << "}";
+
     /*
-     * After running replace_ocurrences, we have:
-     *
+     * After running replace_occurrences, we have:
+     *  {
      *      "fingerprint_0": ["<hash>", "<time1>"],
      *      "fingerprint_1": ["<hash>", "<time1>"], etc...
+     *  }
      *
      * Notice the comma at the end of each line.
      *
@@ -214,73 +211,6 @@ std::vector<std::pair<int, int>> Fingerprint::get_2D_peaks(cv::Mat& data) {
     cv::Mat eroded_background;
     cv::erode(background, eroded_background, kernel);
     cv::Mat detected_peaks = local_max ^ eroded_background; // my addition (^) -- it is '-' in the original
-
-#if 0
-    // for diagnostic purposes only
-    auto i = 1;
-    auto j = 6;
-    while (i <= 3) {
-        __android_log_print(ANDROID_LOG_VERBOSE, "my app", "FIRST LOCAL_MAX[11][%d], %d %d %s", j,
-                            i, local_max.at<uint8_t>(11, j),
-                            (local_max.at<uint8_t>(11, j) == 255) ? "true" : "false");
-        j++;
-        i++;
-    }
-
-    i = 1;
-    j = 4;
-    while (i <= 3) {
-        __android_log_print(ANDROID_LOG_VERBOSE, "my app", "SECOND LOCAL_MAX[942][%d], %d %d %s", j,
-                            i, local_max.at<uint8_t>(942, j),
-                            (local_max.at<uint8_t>(942, j) == 255) ? "true" : "false");
-
-        j++;
-        i++;
-    }
-
-    i = 1;
-    j = 90;
-    while (i <= 3) {
-        __android_log_print(ANDROID_LOG_VERBOSE, "my app", "THIRD LOCAL_MAX[637][%d], %d %d %s", j,
-                            i, local_max.at<uint8_t>(637, j),
-                            (local_max.at<uint8_t>(637, j) == 255) ? "true" : "false");
-        i++;
-        j++;
-    }
-
-    i = 1;
-    j = 43;
-    while (i <= 3) {
-        __android_log_print(ANDROID_LOG_VERBOSE, "my app", "FIRST DETECTED_PEAKS[11][%d], %d %d %s",
-                            j, i, detected_peaks.at<uint8_t>(11, j),
-                            (detected_peaks.at<uint8_t>(11, j) == 255) ? "true" : "false");
-        j++;
-        i++;
-    }
-
-    i = 1;
-    j = 3;
-    while (i <= 3) {
-        __android_log_print(ANDROID_LOG_VERBOSE, "my app",
-                            "SECOND DETECTED_PEAKS[29][%d], %d %d %s", j, i,
-                            detected_peaks.at<uint8_t>(942, j),
-                            (detected_peaks.at<uint8_t>(942, j) == 255) ? "true" : "false");
-
-        j++;
-        i++;
-    }
-
-    i = 1;
-    j = 6;
-    while (i <= 3) {
-        __android_log_print(ANDROID_LOG_VERBOSE, "my app",
-                            "THIRD DETECTED_PEAKS[818][%d], %d %d %s", j, i,
-                            detected_peaks.at<uint8_t>(637, j),
-                            (detected_peaks.at<uint8_t>(637, j) == 255) ? "true" : "false");
-        i++;
-        j++;
-    }
-#endif
 
     // now detected_peaks.size == data.size .. iterate through data. get amp where peak == 255 (true), get indices i,j as well.
     std::vector<std::pair<int, int>> freq_time_idx_pairs;
@@ -391,11 +321,10 @@ extern "C" {
         jobject charset = env->CallStaticObjectMethod(charset_class, forName, utf8);
 
         jclass string_class = env->FindClass("java/lang/String");
-        jmethodID method_id = env->GetMethodID(
-                string_class, "<init>", "([BLjava/nio/charset/Charset;)V");
+        jmethodID method_id = env->GetMethodID(string_class, "<init>", "([BLjava/nio/charset/Charset;)V");
 
-        auto jMessage = reinterpret_cast<jstring>(env->NewObject(string_class, method_id, bytes, charset));
+        auto json_fingerprint = reinterpret_cast<jstring>(env->NewObject(string_class, method_id, bytes, charset));
 
-        return jMessage;
+        return json_fingerprint;
     }
 }
