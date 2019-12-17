@@ -52,14 +52,16 @@ public class MyLibraryActivity extends AppCompatActivity {
         List<String> records = new ArrayList<>();
         String record;
 
-        String audioTitle = getResources().getString(R.string.audio_title); // includes space at the end
-        String date = getResources().getString(R.string.date); // includes space at the end
+        String audioTitle = getResources().getString(R.string.audio_title);
+        String date = getResources().getString(R.string.date);
 
         Cursor cursor = db.query(LibraryHelper.TABLE_NAME, null, null, null, null, null, "_ID DESC");
         if (cursor.moveToFirst()) {
             do {
-                record = audioTitle + cursor.getString(cursor.getColumnIndex(LibraryHelper.COLUMN_SONG_NAME)) + "\n" +
-                        date + cursor.getString(cursor.getColumnIndex(LibraryHelper.COLUMN_DATE));
+                String songName = cursor.getString(cursor.getColumnIndex(LibraryHelper.COLUMN_SONG_NAME));
+                String dateTime = cursor.getString(cursor.getColumnIndex(LibraryHelper.COLUMN_DATE));
+
+                record = audioTitle + " " + songName + "\n" + date + " " + dateTime;
 
                 records.add(record);
             } while (cursor.moveToNext());
