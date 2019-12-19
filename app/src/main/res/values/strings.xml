@@ -55,6 +55,8 @@
 
     <string name="playing_started">Started playing.</string>
 
+    <string name="no_mic_permission">No mic permission given.</string>
+
     <string name="yes">Yes</string>
     <string name="no">No</string>
 </resources>

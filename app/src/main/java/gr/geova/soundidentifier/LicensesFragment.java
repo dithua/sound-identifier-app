@@ -17,7 +17,7 @@ public class LicensesFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        WebView webView = (WebView) LayoutInflater.from(getActivity()).inflate(R.layout.activity_about, null);
+        WebView webView = (WebView) LayoutInflater.from(getActivity()).inflate(R.layout.about_layout, null);
         webView.loadUrl("file:///android_asset/licenses.html");
 
         return new AlertDialog.Builder(getActivity(), R.style.Theme_AppCompat_Light_Dialog_Alert).

@@ -55,6 +55,8 @@
 
     <string name="playing_started">Η αναπαραγωγή ξεκίνησε.</string>
 
+    <string name="no_mic_permission">Δε δόθηκε άδεια λειτουργίας μικροφώνου.</string>
+
     <string name="yes">Ναι</string>
     <string name="no">Όχι</string>
 </resources>
