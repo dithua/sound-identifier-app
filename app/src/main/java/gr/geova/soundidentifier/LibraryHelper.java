@@ -40,7 +40,7 @@ public class LibraryHelper extends SQLiteOpenHelper {
 
     }
 
-    public void deleteRows(SQLiteDatabase db) {
+    public void deleteFromTable(SQLiteDatabase db) {
         db.execSQL("DELETE FROM " + TABLE_NAME);
     }
 }

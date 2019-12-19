@@ -39,7 +39,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                             case DialogInterface.BUTTON_POSITIVE:
                                 LibraryHelper libraryHelper = LibraryHelper.getInstance(getContext());
                                 SQLiteDatabase db = libraryHelper.getWritableDatabase();
-                                libraryHelper.deleteRows(db);
+                                libraryHelper.deleteFromTable(db);
                                 db.close();
                                 break;
                             case DialogInterface.BUTTON_NEGATIVE:
