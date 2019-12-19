@@ -95,8 +95,8 @@ public class MyLibraryActivity extends AppCompatActivity {
             startActivity(i);
             return true;
         } else if (id == R.id.about) {
-            Intent i = new Intent(MyLibraryActivity.this, AboutActivity.class);
-            startActivity(i);
+            LicensesFragment dialog = LicensesFragment.newInstance();
+            dialog.show(getSupportFragmentManager(), "LicensesDialog");
             return true;
         }
 

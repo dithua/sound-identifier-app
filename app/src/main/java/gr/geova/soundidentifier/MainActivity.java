@@ -1,18 +1,37 @@
 package gr.geova.soundidentifier;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "MainActivity";
+
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    private boolean permissionToRecordAccepted = false;
+    private String[] permissions = {Manifest.permission.RECORD_AUDIO};
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                permissionToRecordAccepted = (grantResults[0] == PackageManager.PERMISSION_GRANTED);
+                break;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,14 +40,24 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
+            requestPermissions(permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+        } else {
+            permissionToRecordAccepted = true;
+        }
+
         Button recordButton = findViewById(R.id.record_button);
         Button openFileButton = findViewById(R.id.open_file_button);
 
         recordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, AudioRecordActivity.class);
-                startActivity(i);
+                if (permissionToRecordAccepted) {
+                    Intent i = new Intent(MainActivity.this, AudioRecordActivity.class);
+                    startActivity(i);
+                } else {
+                    Toast.makeText(MainActivity.this, R.string.no_mic_permission, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -65,8 +94,9 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
             return true;
         } else if (id == R.id.about) {
-            Intent i = new Intent(MainActivity.this, AboutActivity.class);
-            startActivity(i);
+            LicensesFragment dialog = LicensesFragment.newInstance();
+            dialog.show(getSupportFragmentManager(), "LicensesDialog");
+
             return true;
         }
 

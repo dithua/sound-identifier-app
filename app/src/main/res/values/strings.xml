@@ -53,6 +53,8 @@
 
     <string name="database_insert_failed">Insert to My Library failed.</string>
 
+    <string name="playing_started">Started playing.</string>
+
     <string name="yes">Yes</string>
     <string name="no">No</string>
 </resources>

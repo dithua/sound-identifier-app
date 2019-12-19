@@ -53,6 +53,8 @@
 
     <string name="database_insert_failed">Η εισαγωγή στην Βιβλιοθήκη Μου απέτυχε.</string>
 
+    <string name="playing_started">Η αναπαραγωγή ξεκίνησε.</string>
+
     <string name="yes">Ναι</string>
     <string name="no">Όχι</string>
 </resources>

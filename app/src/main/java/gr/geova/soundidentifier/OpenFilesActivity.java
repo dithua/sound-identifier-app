@@ -2,7 +2,6 @@ package gr.geova.soundidentifier;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -17,7 +16,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +60,7 @@ public class OpenFilesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_files);
 
         final ListView fileListView = findViewById(R.id.filesListView);
-
+// TODO find way to update the UI (in case a file is deleted)
         final File directory = setDirectory();
 
         final List<String> fileNameList = getFileNames(directory.listFiles());
@@ -97,6 +95,7 @@ public class OpenFilesActivity extends AppCompatActivity {
 
                         switch (which) {
                             case 0: // Play
+                                Toast.makeText(OpenFilesActivity.this, R.string.playing_started, Toast.LENGTH_SHORT).show();
                                 playMedia(filePath, false, LOG_TAG);
                                 break;
                             case 1: // Delete
@@ -156,8 +155,8 @@ public class OpenFilesActivity extends AppCompatActivity {
             startActivity(i);
             return true;
         } else if (id == R.id.about) {
-            Intent i = new Intent(OpenFilesActivity.this, AboutActivity.class);
-            startActivity(i);
+            LicensesFragment dialog = LicensesFragment.newInstance();
+            dialog.show(getSupportFragmentManager(), "LicensesDialog");
             return true;
         }
 

@@ -37,14 +37,14 @@
             app:entries="@array/durationData"
             app:entryValues="@array/durationData" />
         <SwitchPreferenceCompat
-            app:title="@string/save_recordings"
-            app:key="keep_recorded_files_switch"
-            app:summary="@string/save_recordings_summary"
-            app:defaultValue="false" />
-        <SwitchPreferenceCompat
             app:title="@string/playback_track"
             app:key="playback_track_switch"
             app:summary="@string/playback_track_summary"
+            app:defaultValue="false" />
+        <SwitchPreferenceCompat
+            app:title="@string/save_recordings"
+            app:key="keep_recorded_files_switch"
+            app:summary="@string/save_recordings_summary"
             app:defaultValue="false" />
     </PreferenceCategory>
 </PreferenceScreen>

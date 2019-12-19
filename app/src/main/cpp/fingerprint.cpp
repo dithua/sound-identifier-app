@@ -162,6 +162,7 @@ std::string Fingerprint::generate_hashes(std::vector<std::pair<int, int>>& v_in)
                     // the JSON becomes valid later
                     /*
                      * The below lines produces this:
+                     *
                      *  {
                      *      "fingerprint_0": ["<hash>", "<time1>"]
                      *      "fingerprint_1": ["<hash>", "<time1>"] etc...
@@ -178,6 +179,7 @@ std::string Fingerprint::generate_hashes(std::vector<std::pair<int, int>>& v_in)
 
     /*
      * After running replace_occurrences, we have:
+     *
      *  {
      *      "fingerprint_0": ["<hash>", "<time1>"],
      *      "fingerprint_1": ["<hash>", "<time1>"], etc...
@@ -285,7 +287,7 @@ std::string Fingerprint::fingerprint(short *data, int data_size) {
             }
             dst2.at<double>(i, j) = 10 * log10(dst2.at<double>(i, j));
 
-            // my addition -- if it causes problems, better remove it? (it appears in fingerprint.py, though)
+            // my addition -- as it appears in fingerprint.py
             if (cvIsInf(dst2.at<double>(i, j))) {
                 dst2.at<double>(i, j) = 0;
             }
@@ -309,6 +311,7 @@ extern "C" {
         auto json_result = f.fingerprint(data, size);
 
         // https://stackoverflow.com/questions/11621449/send-c-string-to-java-via-jni/24564937#24564937
+        // Convert std::string to Java String
         auto json_result_length = json_result.length();
         auto json_result_native = reinterpret_cast<const jbyte*>(json_result.c_str());
         jbyteArray bytes = env->NewByteArray(json_result_length);
