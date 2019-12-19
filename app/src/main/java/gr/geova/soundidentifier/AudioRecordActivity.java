@@ -24,6 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static gr.geova.soundidentifier.MediaUtils.playMedia;
+
 // Portions of this code are from https://developer.android.com/guide/topics/media/mediarecorder. Licensed under Apache 2.0 (https://source.android.com/license).
 
 public class AudioRecordActivity extends AppCompatActivity {
@@ -31,7 +33,7 @@ public class AudioRecordActivity extends AppCompatActivity {
     private static final String LOG_TAG = "AudioRecordActivity";
 
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
-    private static String fileName = null;
+    private static String filePath = null;
     private SharedPreferences sharedPreferences = null;
     private MediaRecorder mediaRecorder = null;
     private CountDownTimer countDownTimer = null;
@@ -60,33 +62,35 @@ public class AudioRecordActivity extends AppCompatActivity {
 
     private void setFileName() {
         final boolean keepRecordedFiles = sharedPreferences.getBoolean("keep_recorded_files_switch", false);
+        Log.i(LOG_TAG, "keepRecordedFiles: " + keepRecordedFiles);
 
         if (keepRecordedFiles) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE dd-MM-yyyy HH:mm:ss", Locale.US);
+            // replaced HH:mm:ss something else because ':' must not be a part of a filename!
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE dd-MM-yyyy HH.mm.ss", Locale.US);
 
             if (getExternalFilesDir(null) != null) {
                 Log.i(LOG_TAG, "getExternalFilesDir!");
-                fileName = getExternalFilesDir(null).getAbsolutePath();
+                filePath = getExternalFilesDir(null).getAbsolutePath();
             } else {
                 Log.i(LOG_TAG, "getFilesDir!");
-                fileName = getFilesDir().getAbsolutePath();
+                filePath = getFilesDir().getAbsolutePath();
             }
 
-            fileName += File.separator + simpleDateFormat.format(new Date()) + ".aac";
+            filePath += File.separator + simpleDateFormat.format(new Date()) + ".aac";
         } else {
 
             if (getExternalCacheDir() != null) {
                 Log.i(LOG_TAG, "getExternalCacheDir!");
-                fileName = getExternalCacheDir().getAbsolutePath();
+                filePath = getExternalCacheDir().getAbsolutePath();
             } else {
                 Log.i(LOG_TAG, "getCacheDir!");
-                fileName = getCacheDir().getAbsolutePath();
+                filePath = getCacheDir().getAbsolutePath();
             }
 
-            fileName += File.separator + "audiorecordtest.aac";
+            filePath += File.separator + "audiorecordtest.aac";
         }
 
-        Log.i(LOG_TAG, "filename is : " + fileName);
+        Log.i(LOG_TAG, "filename is : " + filePath);
     }
 
     @Override
@@ -110,7 +114,7 @@ public class AudioRecordActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!recordingFinished) {
                     onRecord(false);
-                    new File(fileName).delete();
+                    new File(filePath).delete();
                     cancelTimer();
                     finish(); // exit activity
                 }
@@ -155,39 +159,16 @@ public class AudioRecordActivity extends AppCompatActivity {
 
                 recordingFinished = true;
 
-                // TODO playbackTrack && keepRecordedFiles do not work together!
                 final boolean playbackTrack = sharedPreferences.getBoolean("playback_track_switch", false);
+                Log.i(LOG_TAG, "Playback Track: " + playbackTrack);
 
                 // The following code deliberately blocks the UI.
                 if (playbackTrack) {
-                    final MediaPlayer player = new MediaPlayer();
-                    try {
-                        player.setDataSource(fileName);
-                        player.prepare();
-                        player.start();
-
-                        while (player.isPlaying()) {}
-
-                        player.stop();
-                        player.reset();
-                        player.release();
-
-                        // the below callback didn't block the UI
-                        /*player.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                            @Override
-                            public void onCompletion(MediaPlayer mp) {
-                                player.stop();
-                                player.reset();
-                                player.release();
-                            }
-                        });*/
-                    } catch (IOException e) {
-                        Log.e(LOG_TAG, "MediaPlayer's prepare() failed");
-                    }
+                    playMedia(filePath, true, LOG_TAG);
                 }
 
                 Intent i = new Intent(AudioRecordActivity.this, ResultsActivity.class);
-                i.putExtra("FILENAME", fileName);
+                i.putExtra("FILEPATH", filePath);
                 startActivity(i);
             }
         }.start();
@@ -203,7 +184,7 @@ public class AudioRecordActivity extends AppCompatActivity {
 
     private void startRecording() {
         // for dev purposes
-        if (fileName == null) {
+        if (filePath == null) {
             Log.e(LOG_TAG, "You called startRecording() before setting up a filename!");
             return;
         }
@@ -217,7 +198,7 @@ public class AudioRecordActivity extends AppCompatActivity {
         mediaRecorder.setAudioEncodingBitRate(16 * 44100);
         mediaRecorder.setMaxDuration(recordingDuration);
         mediaRecorder.setAudioSamplingRate(44100);
-        mediaRecorder.setOutputFile(fileName);
+        mediaRecorder.setOutputFile(filePath);
 
         try {
             mediaRecorder.prepare();

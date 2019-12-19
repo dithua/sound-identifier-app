@@ -2,6 +2,7 @@ package gr.geova.soundidentifier;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -10,13 +11,17 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static gr.geova.soundidentifier.MediaUtils.playMedia;
 
 public class OpenFilesActivity extends AppCompatActivity {
 
@@ -56,11 +61,11 @@ public class OpenFilesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_files);
 
-        ListView resultsListView = findViewById(R.id.filesListView);
+        final ListView fileListView = findViewById(R.id.filesListView);
 
         final File directory = setDirectory();
 
-        List<String> fileNameList = getFileNames(directory.listFiles());
+        final List<String> fileNameList = getFileNames(directory.listFiles());
 
         if (fileNameList == null || fileNameList.isEmpty()) {
             AlertDialog alertDialog = new AlertDialog.Builder(OpenFilesActivity.this).create();
@@ -78,20 +83,49 @@ public class OpenFilesActivity extends AppCompatActivity {
 
         final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, fileNameList.toArray());
 
-        resultsListView.setAdapter(adapter);
+        fileListView.setAdapter(adapter);
 
+        fileListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(OpenFilesActivity.this);
+                builder.setTitle(R.string.play_delete_dialog_title);
+                builder.setItems(R.array.OpenFileOptions, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final String filePath = directory.getAbsolutePath() + File.separator + adapter.getItem(position);
 
-        // TODO when an item is LONG CLICKED, display a dialog with 2 options: "Play" and "Delete File"
+                        switch (which) {
+                            case 0: // Play
+                                playMedia(filePath, false, LOG_TAG);
+                                break;
+                            case 1: // Delete
+                                boolean deleteResult = new File(filePath).delete();
 
-        resultsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                if (deleteResult) {
+                                    Toast.makeText(OpenFilesActivity.this, R.string.file_deleted, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(OpenFilesActivity.this, R.string.file_not_deleted, Toast.LENGTH_SHORT).show();
+                                }
+
+                                break;
+                        }
+                    }
+                }).show();
+
+                return true;
+            }
+        });
+
+        fileListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String fileName = directory.getAbsolutePath() + File.separator + adapter.getItem(position);
+                String filePath = directory.getAbsolutePath() + File.separator + adapter.getItem(position);
 
-                Log.i(LOG_TAG, "Filename is " + fileName);
+                Log.i(LOG_TAG, "Filepath is " + filePath);
 
                 Intent i = new Intent(OpenFilesActivity.this, ResultsActivity.class);
-                i.putExtra("FILENAME", fileName);
+                i.putExtra("FILEPATH", filePath);
 
                 startActivity(i);
             }
