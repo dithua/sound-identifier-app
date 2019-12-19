@@ -9,6 +9,11 @@
             app:key="connection_settings_edit_text"
             app:summary="@string/connection_settings_summary" />
         <SwitchPreferenceCompat
+            app:title="@string/vibrate_device_switch_title"
+            app:key="vibrate_device_switch"
+            app:summary="@string/vibrate_device_switch_summary"
+            app:defaultValue="true" />
+        <SwitchPreferenceCompat
             app:title="@string/action_my_library"
             app:key="save_to_db_switch"
             app:summary="@string/save_to_db_switch"
@@ -16,7 +21,7 @@
         <!--<SwitchPreferenceCompat
             app:title="@string/geotagging_switch_title"
             app:key="geotagging_switch"
-            app:summary="@string/geotagging_switch"
+            app:summary="@string/geotagging_switch_summary"
             app:defaultValue="false" />-->
         <Preference
             app:key="clear_my_library"

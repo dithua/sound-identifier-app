@@ -130,7 +130,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
     public void onStart() {
         super.onStart();
 
-        final String fileName = getIntent().getStringExtra("FILENAME");
+        final String fileName = getIntent().getStringExtra("FILEPATH");
 
         final short[] shorts = getPCMData(fileName);
 
@@ -156,8 +156,10 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
     private void vibrateDevice() {
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
+        boolean vibrate = sharedPreferences.getBoolean("vibrate_device_switch", true);
+
         // Android Studio warns that vibrator can be null
-        if (vibrator == null || !vibrator.hasVibrator()) {
+        if (vibrator == null || !vibrator.hasVibrator() || !vibrate) {
             return;
         }
 
@@ -180,7 +182,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
         if (result == -1) {
             Log.e(LOG_TAG, "DB insert() returned -1");
-            Toast.makeText(this, "Insert to database failed.", Toast.LENGTH_SHORT).show(); // TODO strings.xml
+            Toast.makeText(this, R.string.database_insert_failed, Toast.LENGTH_SHORT).show();
         }
 
         db.close();
