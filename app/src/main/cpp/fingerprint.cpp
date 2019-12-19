@@ -55,6 +55,7 @@ This software is provided by the copyright holders and contributors “as is” 
 // Original GitHub repository https://github.com/salsowelim/dejavu_cpp_port/
 // Modified by George Vasios
 #include <opencv2/opencv.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <vector>
 #include <utility>
 #include <cmath>
@@ -63,7 +64,6 @@ This software is provided by the copyright holders and contributors “as is” 
 #include <sha1.hpp>
 #include <android/log.h>
 #include <sstream>
-//#include <opencv2/imgproc/imgproc.hpp>
 //#include <iostream>
 //#include <algorithm>
 //#include <limits>
@@ -268,9 +268,9 @@ std::string Fingerprint::fingerprint(short *data, int data_size) {
     dst2 = dst2 * (1.0 / DEFAULT_FS);
     double sum = 0.0;
     for (double &item : hann_window) {
-        item = std::abs(item); // overkill, I know, since we call pow2 after that TODO review it (look at the Python code, too!)
+        item = std::abs(item); // overkill, I know, since we call pow2 after that (it appears in mlab.py, though)
         item = std::pow(item, 2);
-        sum = sum + item;
+        sum += item;
     }
 
     dst2 = dst2 * (1.0 / sum);
