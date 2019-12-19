@@ -5,6 +5,10 @@
         <item>15</item>
         <item>20</item>
     </string-array>
+    <string-array name="OpenFileOptions">
+        <item>Play</item>
+        <item>Delete</item>
+    </string-array>
     <!--<string-array name="durationDataValues">
         <item>5</item>
         <item>10</item>

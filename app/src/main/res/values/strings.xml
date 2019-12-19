@@ -17,8 +17,10 @@
     <string name="save_to_db_switch">Save track\'s info in My Library</string>
     <string name="save_recordings">Save recordings</string>
     <string name="save_recordings_summary">Save recordings into the device</string>
+    <string name="vibrate_device_switch_title">Vibrate</string>
+    <string name="vibrate_device_switch_summary">Turn on to vibrate once recording finishes</string>
     <!--<string name="geotagging_switch_title">Geotagging</string>
-    <string name="geotagging_switch">Save location metadata in My Library</string>-->
+    <string name="geotagging_switch_summary">Save location metadata in My Library</string>-->
     <string name="advanced_settings">Advanced Settings</string>
     <string name="playback_track">Playback track</string>
     <string name="playback_track_summary">Turn on to play the recorded audio</string>
@@ -36,13 +38,20 @@
     <!--<string name="title_activity_settings">Settings</string>-->
 
     <string name="notification">Notification</string>
-    <string name="noRecord">Nothing to show</string>
+    <string name="noRecord">Nothing to show.</string>
 
     <string name="audio_title">Title:</string>
     <string name="date">Date:</string>
 
     <string name="warning">Warning</string>
     <string name="clear_my_library_dialog">You are about to delete the contents of My Library. Do you wish to proceed?</string>
+
+    <string name="play_delete_dialog_title">Pick an option</string>
+
+    <string name="file_deleted">File was deleted.</string>
+    <string name="file_not_deleted">File was not deleted.</string>
+
+    <string name="database_insert_failed">Insert to My Library failed.</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
