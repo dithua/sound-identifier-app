@@ -13,7 +13,7 @@
     <string name="clear_my_library">Delete records in My Library</string>
     <string name="connection_settings">Connect to server settings</string>
     <string name="connection_settings_title">Connection settings</string>
-    <string name="connection_settings_summary">Click to change server\'s IP address</string>
+    <string name="connection_settings_summary">Click to set server\'s IP address</string>
     <string name="save_to_db_switch">Save track\'s info in My Library</string>
     <string name="save_recordings">Save recordings</string>
     <string name="save_recordings_summary">Save recordings into the device</string>
