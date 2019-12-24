@@ -30,7 +30,6 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,6 +39,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.zip.GZIPOutputStream;
 
 public class ResultsActivity extends AppCompatActivity implements AsyncResponse {
 
@@ -207,7 +207,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         // No result -- server sent "404 Not Found"
         if (responseData.isEmpty()) {
             noResultText.setText(R.string.no_result);
-            noResultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f); // TODO text size
+            noResultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f);
 
             return;
         }
@@ -219,7 +219,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
             songText.setText(songName);
 
-            songText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f); // TODO text size
+            songText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f);
 
             if (saveToDB) {
                 insertToDB(songName);
@@ -259,9 +259,23 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
                 httpURLConnection.setRequestMethod("POST");
                 httpURLConnection.setDoOutput(true);
-                httpURLConnection.setRequestProperty("Content-Type", "application/json");
+
+                httpURLConnection.setRequestProperty("Content-Type", "application/x-gzip");
+                httpURLConnection.setRequestProperty("Content-Encoding", "gzip");
+
                 httpURLConnection.setRequestProperty("Accept", "application/json");
-                // todo probably add gzip?
+                // it's my choice not to set "Accept-Encoding":gzip, because the server sends a very, very small JSON anyway
+
+
+                // compress JSON in gzip form
+                GZIPOutputStream gzipStream = new GZIPOutputStream(httpURLConnection.getOutputStream());
+
+                gzipStream.write(requestData[0].getBytes());
+
+                gzipStream.close();
+
+                // Sends the data uncompressed
+                /*httpURLConnection.setRequestProperty("Content-Type", "application/json");
 
                 DataOutputStream ds = new DataOutputStream(httpURLConnection.getOutputStream());
 
@@ -269,6 +283,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
                 ds.flush();
                 ds.close();
+                 */
             } catch (IOException e) {
                 Log.e(LOG_TAG, "SERVER " + e.getMessage());
                 return ErrorCodes.IO_EXCEPTION_SERVER;
@@ -277,7 +292,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
             // receive response -- begin
             try {
-                if (httpURLConnection.getResponseCode() == 404) {
+                if (httpURLConnection.getResponseCode() != 200) {
                     return "";
                 }
             } catch (IOException e) {
