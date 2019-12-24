@@ -13,11 +13,9 @@
         android:layout_marginStart="128dp"
         android:layout_marginTop="36dp"
         android:layout_marginEnd="134dp"
-        android:layout_marginBottom="75dp"
         android:text="@string/recording_text_view"
-        app:layout_constraintBottom_toTopOf="@+id/stop_recording_button"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.451"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/progressBar" />
 
@@ -26,13 +24,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="160dp"
+        android:layout_marginTop="75dp"
         android:layout_marginEnd="163dp"
         android:layout_marginBottom="273dp"
         android:text="@string/stop_recording_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recording_text_view" />
 
     <ProgressBar
         android:id="@+id/progressBar"
