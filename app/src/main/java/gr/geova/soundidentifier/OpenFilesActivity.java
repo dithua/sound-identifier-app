@@ -60,7 +60,6 @@ public class OpenFilesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_files);
 
         final ListView fileListView = findViewById(R.id.filesListView);
-// TODO find way to update the UI (in case a file is deleted)
         final File directory = setDirectory();
 
         final List<String> fileNameList = getFileNames(directory.listFiles());
@@ -79,7 +78,7 @@ public class OpenFilesActivity extends AppCompatActivity {
             alertDialog.show();
         }
 
-        final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, fileNameList.toArray());
+        final ArrayAdapter<Object> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, fileNameList.toArray());
 
         fileListView.setAdapter(adapter);
 
@@ -94,12 +93,14 @@ public class OpenFilesActivity extends AppCompatActivity {
                         final String filePath = directory.getAbsolutePath() + File.separator + adapter.getItem(position);
 
                         switch (which) {
-                            case 0: // Play
+                            case 0: // Play file
                                 Toast.makeText(OpenFilesActivity.this, R.string.playing_started, Toast.LENGTH_SHORT).show();
                                 playMedia(filePath, false, LOG_TAG);
                                 break;
-                            case 1: // Delete
+                            case 1: // Delete file
                                 boolean deleteResult = new File(filePath).delete();
+
+                                // TODO find way to update the UI (in case a file is deleted)
 
                                 if (deleteResult) {
                                     Toast.makeText(OpenFilesActivity.this, R.string.file_deleted, Toast.LENGTH_SHORT).show();
