@@ -330,4 +330,5 @@ extern "C" {
 
         return json_fingerprint;
     }
+
 }
