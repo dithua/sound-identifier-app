@@ -4,8 +4,8 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "gr.geova.soundidentifier"
-        minSdkVersion 24
-        targetSdkVersion 28
+        minSdkVersion 21 // originally, it was set to 24
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
