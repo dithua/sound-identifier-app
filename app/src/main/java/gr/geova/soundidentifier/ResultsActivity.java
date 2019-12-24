@@ -156,10 +156,10 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
     private void vibrateDevice() {
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-        boolean vibrate = sharedPreferences.getBoolean("vibrate_device_switch", true);
+        boolean isVibrationAllowed = sharedPreferences.getBoolean("vibrate_device_switch", true);
 
         // Android Studio warns that vibrator can be null
-        if (vibrator == null || !vibrator.hasVibrator() || !vibrate) {
+        if (vibrator == null || !vibrator.hasVibrator() || !isVibrationAllowed) {
             return;
         }
 
