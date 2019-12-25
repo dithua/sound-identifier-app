@@ -172,7 +172,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         }
     }
 
-    private void insertToDB(String songName) {
+    private void insertToDB(final String songName) {
         SQLiteDatabase db = libraryHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -189,7 +189,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
     }
 
     @Override
-    public void processFinish(String responseData) {
+    public void processFinish(final String responseData) {
         switch (responseData) {
             case ErrorCodes.MALFORMED_URL:
                 Toast.makeText(this, R.string.malformed_ip_address, Toast.LENGTH_SHORT).show();
@@ -264,7 +264,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
                 httpURLConnection.setRequestProperty("Content-Encoding", "gzip");
 
                 httpURLConnection.setRequestProperty("Accept", "application/json");
-                // it's my choice not to set "Accept-Encoding":gzip, because the server sends a very, very small JSON anyway
+                // it's my choice not to set "Accept-Encoding"=>"gzip", because the server sends a very, very small JSON anyway
 
 
                 // compress JSON in gzip form
@@ -325,7 +325,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         }
 
         @Override
-        protected void onPostExecute(String jsonData) {
+        protected void onPostExecute(final String jsonData) {
             delegate.processFinish(jsonData);
         }
 
