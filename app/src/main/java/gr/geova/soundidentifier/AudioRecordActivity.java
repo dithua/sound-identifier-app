@@ -34,6 +34,15 @@ public class AudioRecordActivity extends AppCompatActivity {
     private boolean recordingFinished = false;
     private int recordingDuration;
 
+    private void cancelRecording() {
+        if (!recordingFinished) {
+            onRecord(false);
+            new File(filePath).delete();
+            cancelTimer();
+            finish(); // exit activity
+        }
+    }
+
     private void cancelTimer() {
         if (countDownTimer != null) {
             countDownTimer.cancel();
@@ -87,12 +96,7 @@ public class AudioRecordActivity extends AppCompatActivity {
         stopRecordingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!recordingFinished) {
-                    onRecord(false);
-                    new File(filePath).delete();
-                    cancelTimer();
-                    finish(); // exit activity
-                }
+                cancelRecording();
             }
         });
     }
@@ -197,6 +201,11 @@ public class AudioRecordActivity extends AppCompatActivity {
             mediaRecorder = null;
             Log.i(LOG_TAG, "MediaRecorder released");
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        cancelRecording();
     }
 
 }
