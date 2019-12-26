@@ -105,17 +105,18 @@ public class AudioRecordActivity extends AppCompatActivity {
     public void onStart() {
         super.onStart();
 
-        recordingDuration = Integer.parseInt(sharedPreferences.getString("duration_recording", "10")) * 1_000; // in milliseconds
-        Log.i(LOG_TAG, "Recording duration in seconds: " + recordingDuration / 1_000);
+        final int oneSecondToMilliseconds = 1_000;
+
+        recordingDuration = Integer.parseInt(sharedPreferences.getString("duration_recording", "10")) * oneSecondToMilliseconds; // in milliseconds
+        Log.i(LOG_TAG, "Recording duration in seconds: " + recordingDuration / oneSecondToMilliseconds);
 
         onRecord(true);
 
         final ProgressBar progressBar = findViewById(R.id.progressBar);
-        final int countDownInterval = 1_000;
 
         progressBar.setProgress(0);
 
-        countDownTimer = new CountDownTimer(recordingDuration, countDownInterval) {
+        countDownTimer = new CountDownTimer(recordingDuration, oneSecondToMilliseconds) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long elapsedTime = recordingDuration - millisUntilFinished;
@@ -157,10 +158,10 @@ public class AudioRecordActivity extends AppCompatActivity {
 
     private void startRecording() {
         // for dev purposes
-        if (filePath == null) {
+        /*if (filePath == null) {
             Log.e(LOG_TAG, "You called startRecording() before setting up a filename!");
             return;
-        }
+        }*/
 
         mediaRecorder = new MediaRecorder();
 
