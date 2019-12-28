@@ -26,10 +26,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_RECORD_AUDIO_PERMISSION:
-                permissionToRecordAccepted = (grantResults[0] == PackageManager.PERMISSION_GRANTED);
-                break;
+        if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION) {
+            permissionToRecordAccepted = (grantResults[0] == PackageManager.PERMISSION_GRANTED);
         }
     }
 
@@ -40,10 +38,11 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_DENIED) {
-            requestPermissions(permissions, REQUEST_RECORD_AUDIO_PERMISSION);
-        } else {
+        // check if permission to record audio was given, request otherwise
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
             permissionToRecordAccepted = true;
+        } else {
+            requestPermissions(permissions, REQUEST_RECORD_AUDIO_PERMISSION);
         }
 
         Button recordButton = findViewById(R.id.record_button);

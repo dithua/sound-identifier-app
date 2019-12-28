@@ -11,6 +11,8 @@ import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
+import java.util.Objects;
+
 public class SettingsFragment extends PreferenceFragmentCompat {
 
     @Override
@@ -36,13 +38,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
-                            case DialogInterface.BUTTON_POSITIVE:
+                            case DialogInterface.BUTTON_POSITIVE: // delete all records
                                 LibraryHelper libraryHelper = LibraryHelper.getInstance(getContext());
                                 SQLiteDatabase db = libraryHelper.getWritableDatabase();
                                 libraryHelper.deleteFromTable(db);
                                 db.close();
                                 break;
-                            case DialogInterface.BUTTON_NEGATIVE:
+                            case DialogInterface.BUTTON_NEGATIVE: // do nothing
                                 break;
                         }
 
@@ -51,7 +53,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                 Resources resources = getResources();
 
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                // show a warning message
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Objects.requireNonNull(getContext()));
                 alertDialogBuilder.setTitle(resources.getString(R.string.warning)).
                         setMessage(resources.getString(R.string.clear_my_library_dialog)).
                         setPositiveButton(resources.getString(R.string.yes), dialogClickListener).

@@ -15,6 +15,12 @@ public class LicensesFragment extends DialogFragment {
         return new LicensesFragment();
     }
 
+    /**
+     * This method shows the app's license along with the licenses of third-party libs I used to make this app.
+     *
+     * @param savedInstanceState
+     * @return a Dialog
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         WebView webView = (WebView) LayoutInflater.from(getActivity()).inflate(R.layout.about_layout, null);

@@ -16,8 +16,9 @@ public class LibraryHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "LIBRARY_DB";
     private static final int DATABASE_VERSION = 1;
-    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_SONG_NAME + " VARCHAR(150) NOT NULL, " + COLUMN_DATE + " REAL DEFAULT (datetime('now', 'localtime')));";
+    private static final String CREATE_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_SONG_NAME + " VARCHAR(150) NOT NULL, " + COLUMN_DATE + " REAL DEFAULT (datetime('now', 'localtime')));"; // datetime is not in GMT, thanks to 'localtime'!
 
+    // singleton pattern
     public static synchronized LibraryHelper getInstance(Context context) {
         if (libraryHelperInstance == null) {
             libraryHelperInstance = new LibraryHelper(context);
@@ -30,6 +31,10 @@ public class LibraryHelper extends SQLiteOpenHelper {
         super(context, DB_NAME, null, DATABASE_VERSION);
     }
 
+    /**
+     * Create table in DB in case it doesn't exists.
+     * @param db an SQLiteDatabase instance
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE);
@@ -40,6 +45,10 @@ public class LibraryHelper extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Delete all records from the table.
+     * @param db an SQLiteDatabase instance
+     */
     public void deleteFromTable(SQLiteDatabase db) {
         db.execSQL("DELETE FROM " + TABLE_NAME);
     }

@@ -8,6 +8,12 @@ import java.io.IOException;
 public class MediaUtils {
 
 
+    /**
+     * This method plays audio from a file.
+     * @param filePath the path to the audio file
+     * @param blockUI if set to true, it blocks the UI
+     * @param LOG_TAG a log tag
+     */
     public static void playMedia(String filePath, boolean blockUI, String LOG_TAG) {
         final MediaPlayer player = new MediaPlayer();
 

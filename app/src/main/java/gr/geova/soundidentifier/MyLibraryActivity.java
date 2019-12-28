@@ -25,6 +25,7 @@ public class MyLibraryActivity extends AppCompatActivity {
         ListView audioListView = findViewById(R.id.myLibraryListView);
         List<String> audioList = fetchDataFromDB();
 
+        // show an alert dialog in case the library is empty
         if (audioList == null) {
             AlertDialog alertDialog = new AlertDialog.Builder(MyLibraryActivity.this).create();
             alertDialog.setTitle(getResources().getString(R.string.notification));
@@ -43,6 +44,11 @@ public class MyLibraryActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method fetches data from the local SQLite Database.
+     *
+     * @return a list of strings
+     */
     private List<String> fetchDataFromDB() {
         SQLiteDatabase db = libraryHelper.getReadableDatabase();
 

@@ -23,7 +23,12 @@ public class OpenFilesActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "OpenFilesActivity";
 
-    private File setDirectory() {
+    /**
+     * Get the directory where the audio files are stored.
+     *
+     * @return File to the directory
+     */
+    private File getDirectory() {
         File directory;
 
         if (getExternalFilesDir(null) != null) {
@@ -35,16 +40,23 @@ public class OpenFilesActivity extends AppCompatActivity {
         return directory;
     }
 
-    private List<String> getFileNames(File[] listOfFiles) {
-        // listOfFiles CAN be null
-        if (listOfFiles == null) {
+    /**
+     * Get the file names of every file in a given directory.
+     * @param directory a directory
+     * @return a list of strings which stores the name of every .aac file
+     */
+    private List<String> getFileNames(File directory) {
+        File[] filesInDir = directory.listFiles();
+
+        // filesInDir CAN be null
+        if (filesInDir == null) {
             return null;
         }
 
         List<String> fileNameList = new ArrayList<>();
 
-        for (File item : listOfFiles) {
-            if (item.isFile()) {
+        for (File item : filesInDir) {
+            if (item.isFile() && item.getName().endsWith(".aac")) {
                 fileNameList.add(item.getName());
             }
         }
@@ -58,10 +70,11 @@ public class OpenFilesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_files);
 
         final ListView fileListView = findViewById(R.id.filesListView);
-        final File directory = setDirectory();
+        final File directory = getDirectory();
 
-        final List<String> fileNameList = getFileNames(directory.listFiles());
+        final List<String> fileNameList = getFileNames(directory);
 
+        // notify user that there's nothing to show
         if (fileNameList == null || fileNameList.isEmpty()) {
             AlertDialog alertDialog = new AlertDialog.Builder(OpenFilesActivity.this).create();
             alertDialog.setTitle(getResources().getString(R.string.notification));
@@ -122,6 +135,7 @@ public class OpenFilesActivity extends AppCompatActivity {
 
                 Log.i(LOG_TAG, "Filepath is " + filePath);
 
+                // go to the next activity (show results on screen)
                 Intent i = new Intent(OpenFilesActivity.this, ResultsActivity.class);
                 i.putExtra("FILEPATH", filePath);
 

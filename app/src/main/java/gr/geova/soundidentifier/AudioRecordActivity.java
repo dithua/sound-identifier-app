@@ -34,6 +34,9 @@ public class AudioRecordActivity extends AppCompatActivity {
     private boolean recordingFinished = false;
     private int recordingDuration;
 
+    /**
+     * This method cancels the audio recording
+     */
     private void cancelRecording() {
         if (!recordingFinished) {
             onRecord(false);
@@ -43,6 +46,9 @@ public class AudioRecordActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method stops the countdown timer.
+     */
     private void cancelTimer() {
         if (countDownTimer != null) {
             countDownTimer.cancel();
@@ -50,12 +56,15 @@ public class AudioRecordActivity extends AppCompatActivity {
         }
     }
 
-    private void setFileName() {
+    /**
+     * This method sets the filepath of the audio file.
+     */
+    private void setFilePath() {
         final boolean keepRecordedFiles = sharedPreferences.getBoolean("keep_recorded_files_switch", false);
         Log.i(LOG_TAG, "keepRecordedFiles: " + keepRecordedFiles);
 
         if (keepRecordedFiles) {
-            // replaced HH:mm:ss something else because ':' must not be a part of a filename!
+            // replaced HH:mm:ss with '.' because ':' must not be a part of a filename!
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE dd-MM-yyyy HH.mm.ss", Locale.US);
 
             if (getExternalFilesDir(null) != null) {
@@ -77,10 +86,10 @@ public class AudioRecordActivity extends AppCompatActivity {
                 filePath = getCacheDir().getAbsolutePath();
             }
 
-            filePath += File.separator + "audiorecordtest.aac";
+            filePath += File.separator + "temp_audio.aac";
         }
 
-        Log.i(LOG_TAG, "filename is : " + filePath);
+        Log.i(LOG_TAG, "filepath is : " + filePath);
     }
 
     @Override
@@ -90,7 +99,7 @@ public class AudioRecordActivity extends AppCompatActivity {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        setFileName();
+        setFilePath();
 
         Button stopRecordingButton = findViewById(R.id.stop_recording_button);
         stopRecordingButton.setOnClickListener(new View.OnClickListener() {
@@ -107,10 +116,11 @@ public class AudioRecordActivity extends AppCompatActivity {
 
         final int oneSecondToMilliseconds = 1_000;
 
-        recordingDuration = Integer.parseInt(sharedPreferences.getString("duration_recording", "10")) * oneSecondToMilliseconds; // in milliseconds
+        // get recording duration from the Settings (in milliseconds)
+        recordingDuration = Integer.parseInt(sharedPreferences.getString("duration_recording", "10")) * oneSecondToMilliseconds;
         Log.i(LOG_TAG, "Recording duration in seconds: " + recordingDuration / oneSecondToMilliseconds);
 
-        onRecord(true);
+        onRecord(true); // start recording
 
         final ProgressBar progressBar = findViewById(R.id.progressBar);
 
@@ -128,7 +138,7 @@ public class AudioRecordActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                onRecord(false);
+                onRecord(false); // stop recording
 
                 progressBar.setProgress(100);
 
@@ -141,6 +151,7 @@ public class AudioRecordActivity extends AppCompatActivity {
                     playMedia(filePath, true, LOG_TAG);
                 }
 
+                // go to the next activity (show results on screen)
                 Intent i = new Intent(AudioRecordActivity.this, ResultsActivity.class);
                 i.putExtra("FILEPATH", filePath);
                 startActivity(i);
@@ -148,6 +159,10 @@ public class AudioRecordActivity extends AppCompatActivity {
         }.start();
     }
 
+    /**
+     * Starts or stops recording audio, according to the boolean parameter.
+     * @param start If set to true, record, otherwise stop recording
+     */
     private void onRecord(boolean start) {
         if (start) {
             startRecording();
@@ -156,10 +171,13 @@ public class AudioRecordActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method creates a MediaRecorder object, and starts recording from the microphone.
+     */
     private void startRecording() {
         // for dev purposes
         /*if (filePath == null) {
-            Log.e(LOG_TAG, "You called startRecording() before setting up a filename!");
+            Log.e(LOG_TAG, "You called startRecording() before setting up a filepath!");
             return;
         }*/
 

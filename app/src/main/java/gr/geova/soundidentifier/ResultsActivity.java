@@ -59,13 +59,18 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
     private SendAndReceiveData asyncTask = new SendAndReceiveData();
     private boolean ran = false; // TODO find something better
 
+    /**
+     * Get the raw PCM data from an AAC-encoded audio file.
+     * @param filePath: the filepath of the audio file
+     * @return the PCM data
+     */
     @Nullable
-    private short[] getPCMData(final String fileName) {
+    private short[] getPCMData(final String filePath) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ADTSDemultiplexer adts;
 
         try {
-            adts = new ADTSDemultiplexer(new FileInputStream(fileName));
+            adts = new ADTSDemultiplexer(new FileInputStream(filePath));
         } catch (IOException e) {
             Log.e(LOG_TAG, e.getMessage());
             return null;
@@ -105,6 +110,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
         byte[] outputStreamByteArray = outputStream.toByteArray();
 
+        // convert byte[] to short[]
         short[] shorts = new short[outputStreamByteArray.length / 2];
         ByteBuffer.wrap(outputStreamByteArray).order(ByteOrder.BIG_ENDIAN).asShortBuffer().get(shorts);
 
@@ -130,9 +136,9 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
     public void onStart() {
         super.onStart();
 
-        final String fileName = getIntent().getStringExtra("FILEPATH");
+        final String filePath = getIntent().getStringExtra("FILEPATH");
 
-        final short[] shorts = getPCMData(fileName);
+        final short[] shorts = getPCMData(filePath);
 
         if (shorts == null) {
             Log.e(LOG_TAG, "shorts is null");
@@ -140,7 +146,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
             return;
         }
 
-        String json = fingerprint(shorts);
+        String json = fingerprint(shorts); // call native method to get the fingerprints in JSON format
 
         if (json.isEmpty()) {
             Toast.makeText(this, R.string.generic_error_message, Toast.LENGTH_LONG).show();
@@ -153,6 +159,10 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         }
     }
 
+    /**
+     * This method vibrates the device, if the device has a vibrator,
+     * and the user has enabled vibration in the Settings.
+     */
     private void vibrateDevice() {
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -172,14 +182,20 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         }
     }
 
+    /**
+     * This method inserts data into the SQLite Database of the device.
+     * @param songName the name of the track, be it music or sound in general
+     */
     private void insertToDB(final String songName) {
         SQLiteDatabase db = libraryHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(LibraryHelper.COLUMN_SONG_NAME, songName);
+        // date is added automatically (see LibraryHelper.java)
 
         long result = db.insert(LibraryHelper.TABLE_NAME, null, values);
 
+        // in case the insertion failed
         if (result == -1) {
             Log.e(LOG_TAG, "DB insert() returned -1");
             Toast.makeText(this, R.string.database_insert_failed, Toast.LENGTH_SHORT).show();
@@ -188,8 +204,13 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         db.close();
     }
 
+    /**
+     * Show the results on the screen.
+     * @param responseData the data received from the server
+     */
     @Override
     public void processFinish(final String responseData) {
+        // print error messages in case something wrong happened with the connection to the server
         switch (responseData) {
             case ErrorCodes.MALFORMED_URL:
                 Toast.makeText(this, R.string.malformed_ip_address, Toast.LENGTH_SHORT).show();
@@ -204,7 +225,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
         vibrateDevice();
 
-        // No result -- server sent "404 Not Found"
+        // No result -- server didn't send a 200 status code
         if (responseData.isEmpty()) {
             noResultText.setText(R.string.no_result);
             noResultText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20f);
@@ -213,6 +234,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         }
 
         try {
+            // parse server's response data
             JSONObject jsonObject = new JSONObject(responseData);
 
             String songName = jsonObject.getString(LibraryHelper.COLUMN_SONG_NAME);
@@ -234,6 +256,13 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
     private static class SendAndReceiveData extends AsyncTask<String, Void, String> {
         AsyncResponse delegate;
 
+        /**
+         * This method establishes connection with the server,
+         * sends and receives request and response data respectively.
+         *
+         * @param requestData the data to be sent to the server
+         * @return String, server's response data (empty in case something wrong happened)
+         */
         @Override
         protected String doInBackground(String... requestData) {
             final String IPAddress = sharedPreferences.getString("connection_settings_edit_text", "");
@@ -293,7 +322,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
             // receive response -- begin
             try {
                 if (httpURLConnection.getResponseCode() != 200) {
-                    return "";
+                    return ""; // return empty string in case response code was not 200 (OK)
                 }
             } catch (IOException e) {
                 Log.e(LOG_TAG, "GENERIC " + e.getMessage());
