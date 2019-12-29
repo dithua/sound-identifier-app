@@ -261,7 +261,8 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
          * sends and receives request and response data respectively.
          *
          * @param requestData the data to be sent to the server
-         * @return String, server's response data (empty in case something wrong happened)
+         * @return Returns a String, server's response data (if it's empty, then server sent 404 Not Found).
+         * It can also return a String from ErrorCodes.java, to indicate that something wrong happened with the connection with the server.
          */
         @Override
         protected String doInBackground(String... requestData) {
@@ -298,18 +299,14 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
                 // compress JSON in gzip form
                 GZIPOutputStream gzipStream = new GZIPOutputStream(httpURLConnection.getOutputStream());
-
                 gzipStream.write(requestData[0].getBytes());
-
                 gzipStream.close();
 
                 // Sends the data uncompressed
                 /*httpURLConnection.setRequestProperty("Content-Type", "application/json");
 
                 DataOutputStream ds = new DataOutputStream(httpURLConnection.getOutputStream());
-
                 ds.writeBytes(requestData[0]);
-
                 ds.flush();
                 ds.close();
                  */
@@ -321,8 +318,8 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
             // receive response -- begin
             try {
-                if (httpURLConnection.getResponseCode() != 200) {
-                    return ""; // return empty string in case response code was not 200 (OK)
+                if (httpURLConnection.getResponseCode() == 404) {
+                    return "";
                 }
             } catch (IOException e) {
                 Log.e(LOG_TAG, "GENERIC " + e.getMessage());
