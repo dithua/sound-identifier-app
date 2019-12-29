@@ -47,7 +47,7 @@ public class MyLibraryActivity extends AppCompatActivity {
     /**
      * This method fetches data from the local SQLite Database.
      *
-     * @return a list of strings
+     * @return Returns a list of strings
      */
     private List<String> fetchDataFromDB() {
         SQLiteDatabase db = libraryHelper.getReadableDatabase();

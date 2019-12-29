@@ -19,7 +19,7 @@ public class LicensesFragment extends DialogFragment {
      * This method shows the app's license along with the licenses of third-party libs I used to make this app.
      *
      * @param savedInstanceState
-     * @return a Dialog
+     * @return Returns a Dialog
      */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

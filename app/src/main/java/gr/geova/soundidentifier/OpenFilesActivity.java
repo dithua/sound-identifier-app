@@ -26,7 +26,7 @@ public class OpenFilesActivity extends AppCompatActivity {
     /**
      * Get the directory where the audio files are stored.
      *
-     * @return File to the directory
+     * @return Returns a File to the directory
      */
     private File getDirectory() {
         File directory;
@@ -43,7 +43,7 @@ public class OpenFilesActivity extends AppCompatActivity {
     /**
      * Get the file names of every file in a given directory.
      * @param directory a directory
-     * @return a list of strings which stores the name of every .aac file
+     * @return Returns a list of strings which stores the name of every file in a given directory; null if something bad happened (dir not found, or an I/O error occurred)
      */
     private List<String> getFileNames(File directory) {
         File[] filesInDir = directory.listFiles();
@@ -56,7 +56,7 @@ public class OpenFilesActivity extends AppCompatActivity {
         List<String> fileNameList = new ArrayList<>();
 
         for (File item : filesInDir) {
-            if (item.isFile() && item.getName().endsWith(".aac")) {
+            if (item.isFile()) {
                 fileNameList.add(item.getName());
             }
         }
