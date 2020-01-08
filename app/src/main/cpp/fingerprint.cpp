@@ -190,7 +190,7 @@ std::string Fingerprint::generate_hashes(std::vector<std::pair<int, int>>& v_in)
      */
     std::string JSON = replace_occurrences(json.str(), "]\"", "],\"");
 
-    __android_log_print(ANDROID_LOG_VERBOSE, "My App", "JSON dump: %s", JSON.c_str());
+    __android_log_print(ANDROID_LOG_VERBOSE, "Native Code", "JSON dump: %s", JSON.c_str());
 
     return JSON;
 }
@@ -220,7 +220,7 @@ std::vector<std::pair<int, int>> Fingerprint::get_2D_peaks(cv::Mat& data) {
         for (int j = 0; j < data.cols; j++) {
             if ((detected_peaks.at<uint8_t>(i, j) == 255) and
                 (data.at<double>(i, j) > DEFAULT_AMP_MIN)) {
-                freq_time_idx_pairs.push_back(std::make_pair(i, j));
+                freq_time_idx_pairs.emplace_back(i, j);
             }
         }
     }
@@ -308,24 +308,28 @@ extern "C" {
         env->GetShortArrayRegion(channel_samples, 0, size, &data[0]);
 
         Fingerprint f;
-        auto json_result = f.fingerprint(data, size);
+        auto json_result_native = f.fingerprint(data, size);
 
         // https://stackoverflow.com/questions/11621449/send-c-string-to-java-via-jni/24564937#24564937
-        // Convert std::string to Java String
-        auto json_result_length = json_result.length();
-        auto json_result_native = reinterpret_cast<const jbyte*>(json_result.c_str());
-        jbyteArray bytes = env->NewByteArray(json_result_length);
-        env->SetByteArrayRegion(bytes, 0, json_result_length, json_result_native);
 
-        jclass charset_class = env->FindClass("java/nio/charset/Charset");
-        jmethodID forName = env->GetStaticMethodID(charset_class,
+        // convert char * to jbyte*
+        auto json_result_java = reinterpret_cast<const jbyte*>(json_result_native.c_str());
+
+        // fill byte array with the contents of json_result_java
+        auto json_result_length = json_result_native.length();
+        auto bytes = env->NewByteArray(json_result_length);
+        env->SetByteArrayRegion(bytes, 0, json_result_length, json_result_java);
+
+        auto charset_class = env->FindClass("java/nio/charset/Charset");
+        auto forName = env->GetStaticMethodID(charset_class,
                 "forName", "(Ljava/lang/String;)Ljava/nio/charset/Charset;");
-        jstring utf8 = env->NewStringUTF("UTF-8");
-        jobject charset = env->CallStaticObjectMethod(charset_class, forName, utf8);
+        auto utf8 = env->NewStringUTF("UTF-8");
+        auto charset = env->CallStaticObjectMethod(charset_class, forName, utf8);
 
-        jclass string_class = env->FindClass("java/lang/String");
-        jmethodID method_id = env->GetMethodID(string_class, "<init>", "([BLjava/nio/charset/Charset;)V");
+        auto string_class = env->FindClass("java/lang/String");
+        auto method_id = env->GetMethodID(string_class, "<init>", "([BLjava/nio/charset/Charset;)V");
 
+        // convert bytes to java.lang.String and eventually to jstring
         auto json_fingerprint = reinterpret_cast<jstring>(env->NewObject(string_class, method_id, bytes, charset));
 
         return json_fingerprint;
