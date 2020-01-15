@@ -37,6 +37,16 @@ android {
             debuggable false
             jniDebuggable false
         }
+        // Release build requires signing, so we stick with the debug build at the moment
+        debug {
+            minifyEnabled true
+            shrinkResources true
+
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            debuggable false
+            jniDebuggable false
+        }
     }
 
     externalNativeBuild {
