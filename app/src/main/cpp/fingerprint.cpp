@@ -72,7 +72,7 @@ This software is provided by the copyright holders and contributors “as is” 
 //#include <chrono>
 //#include <fstream>
 
-std::vector<std::vector<double>> Fingerprint::stride_windows(const std::vector<double> &data,
+std::vector<std::vector<double>> Fingerprint::stride_windows(const std::vector<double>& data,
         size_t block_size, size_t overlap) {
     //https://stackoverflow.com/questions/21344296/striding-windows/21345055
     std::vector<std::vector<double>> res;
