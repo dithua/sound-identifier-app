@@ -1,12 +1,3 @@
-"""import numpy as np
-import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
-from scipy.ndimage.filters import maximum_filter
-from scipy.ndimage.morphology import (generate_binary_structure,
-                                      iterate_structure, binary_erosion)
-import hashlib
-from operator import itemgetter"""
-
 IDX_FREQ_I = 0
 IDX_TIME_J = 1
 
