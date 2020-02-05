@@ -47,7 +47,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
         System.loadLibrary("fingerprint-lib");
     }
 
-    private native String fingerprint(short[] channel);
+    private native String fingerprint(short[] channelSamples);
 
     private static final String LOG_TAG = "ResultsActivity";
     private static SharedPreferences sharedPreferences = null;

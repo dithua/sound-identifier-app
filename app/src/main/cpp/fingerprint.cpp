@@ -244,6 +244,7 @@ std::string Fingerprint::fingerprint(short *data, int data_size) {
     std::vector<double> hann_window = create_window(DEFAULT_WINDOW_SIZE);
     apply_window(hann_window, blocks);
 
+    // dst is the transposed version of blocks (rows became cols and cols became rows)
     cv::Mat dst(blocks[0].size(), blocks.size(), CV_64F);
     for (int i = 0; i < dst.rows; i++) {
         for (int j = 0; j < dst.cols; j++) {
