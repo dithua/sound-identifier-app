@@ -80,10 +80,11 @@ class Dejavu(object):
                          fingerprint.DEFAULT_WINDOW_SIZE *
                          fingerprint.DEFAULT_OVERLAP_RATIO, 5)
         song = {
-            Dejavu.SONG_ID : song_id,
+            #Dejavu.SONG_ID : song_id,
             Dejavu.SONG_NAME : songname.encode("utf8"),
             Dejavu.CONFIDENCE : largest_count,
-            Dejavu.OFFSET : int(largest),
+            #Dejavu.OFFSET : int(largest),
             Dejavu.OFFSET_SECS : nseconds,
-            Database.FIELD_FILE_SHA1 : song.get(Database.FIELD_FILE_SHA1, None).encode("utf8"),}
+            #Database.FIELD_FILE_SHA1 : song.get(Database.FIELD_FILE_SHA1, None).encode("utf8"),
+        }
         return song
