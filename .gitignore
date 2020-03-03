@@ -13,5 +13,3 @@
 example
 .externalNativeBuild
 .cxx
-web-app/dejavu/*.pyc
-web-app/dejavu/__pycache__
