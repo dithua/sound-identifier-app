@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="recording_duration_default_val">2</integer> <!-- index of "durationData" array-->
+</resources>
