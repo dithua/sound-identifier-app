@@ -14,14 +14,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-import static gr.geova.soundidentifier.MediaUtils.playMedia;
 
 public class OpenFilesActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = "OpenFilesActivity";
+    private final MediaUtils mediaUtils = new MediaUtils();
 
     /**
      * Get the directory where the audio files are stored.
@@ -41,7 +44,7 @@ public class OpenFilesActivity extends AppCompatActivity {
     }
 
     /**
-     * Get the file names of every file in a given directory.
+     * Get the file name of every file in a given directory.
      * @param directory a directory
      * @return Returns a list of strings which stores the name of every file in a given directory; null if something bad happened (dir not found, or an I/O error occurred)
      */
@@ -60,6 +63,22 @@ public class OpenFilesActivity extends AppCompatActivity {
                 fileNameList.add(item.getName());
             }
         }
+
+        // The following code assumes that the files' name won't be changed from a file explorer app.
+        // Otherwise, ParseException occurs but it's caught
+        Collections.sort(fileNameList, new Comparator<String>() {
+                    @Override
+                    public int compare(String date1, String date2) {
+                        try {
+                            // reverse order
+                            return -1 * AudioRecordActivity.simpleDateFormat.parse(date1).compareTo(AudioRecordActivity.simpleDateFormat.parse(date2));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            return 0;
+                        }
+                    }
+                }
+        );
 
         return fileNameList;
     }
@@ -89,7 +108,7 @@ public class OpenFilesActivity extends AppCompatActivity {
             alertDialog.show();
         }
 
-        final ArrayAdapter<Object> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, fileNameList.toArray());
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, fileNameList);
 
         fileListView.setAdapter(adapter);
 
@@ -106,15 +125,17 @@ public class OpenFilesActivity extends AppCompatActivity {
                         switch (which) {
                             case 0: // Play file
                                 Toast.makeText(OpenFilesActivity.this, R.string.playing_started, Toast.LENGTH_SHORT).show();
-                                playMedia(filePath, false, LOG_TAG);
+                                mediaUtils.playMedia(filePath, false, LOG_TAG);
                                 break;
                             case 1: // Delete file
                                 boolean deleteResult = new File(filePath).delete();
 
-                                // TODO find way to update the UI (in case a file is deleted)
-
                                 if (deleteResult) {
                                     Toast.makeText(OpenFilesActivity.this, R.string.file_deleted, Toast.LENGTH_SHORT).show();
+
+                                    // update UI after item removal
+                                    adapter.remove(adapter.getItem(position));
+                                    adapter.notifyDataSetChanged();
                                 } else {
                                     Toast.makeText(OpenFilesActivity.this, R.string.file_not_deleted, Toast.LENGTH_SHORT).show();
                                 }
@@ -141,8 +162,15 @@ public class OpenFilesActivity extends AppCompatActivity {
 
                 startActivity(i);
 
-                //finish(); // TODO review
+                finish();
             }
         });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.e(LOG_TAG, "OnStop() called");
+        mediaUtils.releaseResources();
     }
 }

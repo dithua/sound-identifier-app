@@ -2,7 +2,6 @@ package gr.geova.soundidentifier;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -57,7 +56,6 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
     private TextView songText, noResultText;
     private SendAndReceiveData asyncTask = new SendAndReceiveData();
-    private boolean ran = false; // TODO find something better
 
     /**
      * Get the raw PCM data from an AAC-encoded audio file.
@@ -148,14 +146,11 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
         String json = fingerprint(shorts); // call native method to get the fingerprints in JSON format
 
-        if (json.isEmpty()) {
-            Toast.makeText(this, R.string.generic_error_message, Toast.LENGTH_LONG).show();
+        if (isJSONEmpty(json)) {
             Log.e(LOG_TAG, "json is empty");
+            Toast.makeText(this, R.string.generic_error_message, Toast.LENGTH_LONG).show();
         } else {
-            if (!ran) {
-                asyncTask.execute(json);
-                ran = true;
-            }
+            asyncTask.execute(json);
         }
     }
 
@@ -319,7 +314,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
             // receive response -- begin
             try {
                 if (httpURLConnection.getResponseCode() == 404) {
-                    return "";
+                    return ""; // Server sends an empty string in case of an 440 error
                 }
             } catch (IOException e) {
                 Log.e(LOG_TAG, "GENERIC " + e.getMessage());
@@ -357,12 +352,7 @@ public class ResultsActivity extends AppCompatActivity implements AsyncResponse 
 
     }
 
-    @Override
-    public void onBackPressed() {
-        finish();
-        Intent i = new Intent(ResultsActivity.this, MainActivity.class);
-        startActivity(i);
-        //TODO review finish()
-        // read about stacks!
+    private boolean isJSONEmpty(String json) {
+        return json.equals("{}");
     }
 }

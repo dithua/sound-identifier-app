@@ -15,11 +15,11 @@ import androidx.preference.PreferenceManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import static gr.geova.soundidentifier.MediaUtils.playMedia;
 
 // Portions of this code are from https://developer.android.com/guide/topics/media/mediarecorder. Licensed under Apache 2.0 (https://source.android.com/license).
 
@@ -33,6 +33,7 @@ public class AudioRecordActivity extends AppCompatActivity {
     private CountDownTimer countDownTimer = null;
     private boolean recordingFinished = false;
     private int recordingDuration;
+    public static final DateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yy HH.mm.ss", Locale.US);
 
     /**
      * This method cancels the audio recording
@@ -64,8 +65,6 @@ public class AudioRecordActivity extends AppCompatActivity {
         Log.i(LOG_TAG, "keepRecordedFiles: " + keepRecordedFiles);
 
         if (keepRecordedFiles) {
-            // replaced HH:mm:ss with '.' because ':' must not be a part of a filename!
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("EEE dd-MM-yyyy HH.mm.ss", Locale.US);
 
             if (getExternalFilesDir(null) != null) {
                 Log.i(LOG_TAG, "getExternalFilesDir!");
@@ -148,13 +147,14 @@ public class AudioRecordActivity extends AppCompatActivity {
                 Log.i(LOG_TAG, "Playback Track: " + playbackTrack);
 
                 if (playbackTrack) {
-                    playMedia(filePath, true, LOG_TAG);
+                    new MediaUtils().playMedia(filePath, true, LOG_TAG);
                 }
 
                 // go to the next activity (show results on screen)
                 Intent i = new Intent(AudioRecordActivity.this, ResultsActivity.class);
                 i.putExtra("FILEPATH", filePath);
                 startActivity(i);
+                finish();
             }
         }.start();
     }
