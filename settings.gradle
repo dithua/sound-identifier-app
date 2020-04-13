@@ -1,6 +1,0 @@
-include ':app'
-rootProject.name='Sound Identifier'
-
-def opencvsdk = '../OpenCV-android-sdk'
-include ':opencv'
-project(':opencv').projectDir = new File(opencvsdk + '/sdk')
