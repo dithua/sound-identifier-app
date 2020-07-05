@@ -1,6 +1,6 @@
 # sound-identifier-app
 
-A project I developed for my BSc thesis. Its aim is to identify sounds provided that they already exist in the database.
+A project [I](https://github.com/GeoVa19) developed for my BSc thesis. Its aim is to identify sounds provided that they already exist in the database.
 
 It consists of two parts: a mobile application which runs on the Android platform, and a web application written in Python (currently, only Python 2 is supported).
 
